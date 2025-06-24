@@ -1,0 +1,538 @@
+*history of kubernetes:
+ =====================
+-->Created by Google to manage their containers AKA Borg
+-->Mid-2014: Google introduced Kubernetes as an open source version of Borg
+-->July 21-2015: Kubernetes v1.0 gets released. Along with the release, Google partnered with the Linux Foundation to form the Cloud Native Computing Foundation (CNCF).
+-->2016: Kubernetes Goes Mainstream!
+	ex:Kops, Minikube, kubeadm etc
+	ex:September 29: Pokemon GO! Kubernetes Case Study Released!
+-->2017: Enterprise Adoption
+	ex:Google and IBM announce Istio
+	ex:Github runs on Kubernetes
+	ex:oracle joined the cloud native computing foundation 
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+*Kubernetes-kube api server:
+ ==========================
+-->Main Hero! Handles all the requests and enables communication across stack services.
+-->Component on the master that exposes the Kubernetes API.
+-->It is the front-end for the Kubernetes control plane.
+	• Admins connects to it using Kubectl CLI
+	• Web Dashboard can be integrated with this API
+#kubernetes:
+------------
+
+==>Kubernetes-componenets:
+	
+	#pod-->abstraction of containers
+	#service-->communication
+	#ingress-->route traffic into cluster
+	#configmap---|
+		     |------>external configuration 
+	#secret------|
+	#volumes-->data persistence
+	#deployment-----------|
+		      	      |------>replication
+	#statefulset(for db)--|
+
+==>kubernetes-configuration:
+
+	-->it has two configuration files they are
+		1)deployment file
+		2)service file
+	-->every configuration file has 3 parts they are 
+		1)metadata
+		2)specification 
+		3)status
+
+==>minikube and kubectl:
+
+    	# minikube:
+      	  --------	
+		-->minikube has only one node 
+		-->it contains both master processes and worker precesses in one node 
+		-->it pre-install with docker run-time 
+		-->used for testing on local environment
+    	# kubectl:
+          -------
+		-->kubectl is a command line tool for K8s cluster
+============================================================================================================================================================
+
+#kubernetes-architecture:
+=========================
+-->kubernetes is a portable,extensible,open-source platform for managing containerized workloads
+-->out of the box features
+	-->service discovery and load balancing
+	-->storage orchestration
+	-->automated rollouts and rollback
+	-->automatic bin packing
+	-->secret and configuration management
+
+#kubernetes-components:
+======================
+-->etcd
+-->kube-scheduler
+-->kube-controller manager
+-->cloud controller manager
+-->kube-api server
+-->kubelet
+-->kube-proxy
+-->container runtime(Docker) //common in both master and worker nodes 
+
+1)kube-api server:
+------------------
+-->it acts as front end for the kubernetes control plane. it exposes the kubernetes API
+-->CLItools(like kubectl),Users and even master componenets(scheduler,controller manager,etcd) and worker node components like(kubelet) everything talk with API server
+
+2)etcd:
+-------
+-->consistent and highly-avaliable key value store used as kubernetes backing store for all cluster data
+-->it stores all the master and worker node information
+
+3)kube-scheduler:
+-----------------
+-->scheduler is responsible for distributing containers across multiple nodes
+-->it watches for newly created pods with no assigned node,and selects a node for them to run on
+
+4)Kube-controller-manager:
+--------------------------
+-->controllers are responsible for noticing and responding when nodes,containers or endpoints go down.they make decisions to bring up new containers in such cases
+-->it has multiple controllers they are
+	i)node controller: responsible for noticing and responding when nodes go down
+	ii)replication controller:responsible for maintaining the correct number of pods for every replication
+	iii)endpoints controller:populates the endpoints object(that is,join,services&pods)
+	iv)service Account & Token controller:creates default accounts and API access for new namespaces
+
+5)cloud-controller-manager:
+---------------------------
+-->A kubernetes control plane component that embeds cloud-specific control logic
+-->it only runs controllers that are specific to your cloud component
+-->on-premise kubernetes clusters will not have this component
+	i)node controller:for checking the cloud provider to determine if a node has been deleted in the cloud after it stops responding
+	ii)route controller:for setting up routes in the undrlying cloud infrastructure
+	iii)service controller: for creating,updating and deleting cloud provider load balancer
+
+6)kubelet:
+----------
+-->kubelet is the agent that runs on every node in the cluster
+-->this agent is responsible for making sure that containers are running in a pod on a node
+
+7)kube-proxy:
+-------------
+-->it is a network proxy that runs on each node in your cluster
+-->it maitains network rules on nodes
+-->in short,these notwork rules allow network communication to your pods from network sessions inside or outside of your cluster
+
+8)container runtime:
+--------------------
+-->container runtime is the underlying software where we run all these Kubernetes components.
+-->we are using Docker,but we have other runtime options like rkt,container-d etc.
+============================================================================================================================================================
+
+#kubernetes fundamentals(pod,replicaset,deployment & service):
+==============================================================
+1)pod:
+------
+-->A POD is a single instance of an application 
+-->A POD is the smallest object,that you can create in kubernetes.
+
+2)ReplicaSet:
+-------------
+-->A replicaset will maintain a stable set of replica pods running at any given time.
+-->in short,it is often used to guarantee the availability of a specified number of identical pods
+
+3)Deployment:
+-------------
+-->a deployment runs multiple replicas of your application and automatically replaces any instances that fail or become unresponsive.
+-->rollout & rollback changes to applications. deployments are well suited for stateless applications.
+
+4)Service:
+----------
+-->A service is an abstraction for pods, provideing a stable,so called virtuval IP(VIP) address.
+-->in simple terms,service sits infront of a POD and acts as load balancer
+
+============================================================================================================================================================
+
+#Kubernetes POD:
+================
+-->with kubernetes our core goal will be to deploy our applications in the form of container on worker nodes in a k8s cluster
+-->kubernetes does not deploy containers directly on the worker nodes.
+-->container is encapsulated in to a kubernetes object named POD
+-->A POD is a single instance of an application
+-->A POD is the smallest object that we can create in kubernetes.
+-->PODs generally have one-to-one relationship with containers.
+-->to scale up we create new POD and to scale down we delete the POD
+-->we cannot have multiple containers of same kind in a single POD.
+	ex:two NGINX containers in single POD serving same purpose is not recommended
+--> we can have multiple containers in a single POD,provided they are not of same kind.
+-->Helper Containers(side-car):
+	1)data pullers:pull data required by main container 
+	2)data pushers:push data by collecting from main container(log)
+	3)proxies:writes static data to hatml files using helper container and reads using main container
+-->Communication
+	-->the two containers can easily communicate with each other easily as they share same network space
+	-->they can also easily share same storage space.
+-->multi-container pods is a rare use-case and we will try to focus on core fundamentals.
+-->kubectl get ns 		//gives the available namespaces in kubernetes
+-->kubectl get nodes 		//give information about nodes
+-->kubectl get nodes -o wide		//give more information about nodes
+**-->kubectl run <desired-pod-name> --image <container-images>		//used to create pod 
+-->kubectl get pods		//list the pods
+-->kubectl get po		//alias name for pods is po
+-->kubectl get pods -o wide		//list the more information about pods
+-->kubectl describe pod <pod-name>	//it will describe the pod what tasks taken palce 
+-->kubectl delete pod <pod-name>	/deletes the pod
+-->kubectl logs <pod-name>	#Dump pod logs
+-->kubectl logs -f <pod-name>	#stream pod logs 
+-->kubectl exec -it <pod-name> -- /bin/bash	#connect to container in pod
+-->kubectl get pod <pod-name> -o yaml	#get pod definition in YAML output
+-->kubectl delete pod <pod-nae>		#deletes the specific pod
+============================================================================================================================================================ 
+
+#Kubernetes service:
+====================
+->Kubernetes-Service-LoadBalancer
+-->we can expose an application running on a set of PODs using different types of services  available in K8s.
+	->ClusterIP service(internal to K8s cluster)
+	->Nodeport Service(To internet)
+	->LoadBalancer Service(To internet)
+	->Ingress Service(To internet)
+-->LoadBalancer Service
+	->to access our application outside of Azure AKS K8s cluster,we can use Kubernetes loadbalancer service which will be eventually mapped to Azure Standard Load Balancer
+	->when we deploy K8s load balancer service, the following will happen in Azure standard load balancer
+		i)A new public IP gets created and associates that to frontend IP confogiration
+		ii)A new Load Balancing rule will be created which associates frontend ip and backend pool
+
+**-->kubectl expose pod <pod-name> --type=LoadBalancer --port=80 --name=<service-name>		#expose pod as a service 
+-->kubctl get service		#get service info
+-->kubectl get svc		#get service info
+-->kubectl describe service <service-name>		#describe service name
+-->kubectl get all 		#gives all information about default namespace
+-->kubectl get namespaces 	#gives all information about namespaces
+-->kubectl get service <service-name> -o yaml	#get service definition in YAML
+-->kubectl delete service <service-name>	#deletes the specific service
+============================================================================================================================================================
+
+#kubernetes replicasets:
+=======================
+-->A replicaSet's purpose is to maintain a stable set of replica pods running at any given time
+-->if our application crashes(any pod dies),replicaset will re-create the pod immediately to ensure the configured number of pods running at any given time
+-->kubectl get replicaset	#gives the replica info
+-->kubectl get rs		#gives the replica info
+-->kubectl describe rs <replicaset-name>	#give the replicaset information
+**-->kubectl expose rs <replicaset-name> --type=LoadBalancer --port=80 --target-port=8080 --name=<service-name-to-be-created>	#expose replicaset as a service
+============================================================================================================================================================
+
+#kubernetes Deployments:
+========================
+-->kubectl create deployment <deployment-name> --image=<container-image>	#create deployment
+-->kubectl get deployments 	#verify deployment
+-->kubectl get deploy		#verify deployment
+-->kubectl get rs		#verify replicaset
+-->kubectl get po 		#verify pods`
+-->kubectl scale --replicas=10 deployment/<deployment-name>	#scaling deployment
+-->kubectl expose deployment <deployment-name> --type=LoadBalancer --port=80 --target-port=80 --name=<service-name>		#expose deployment as service
+-->we can update Deployment in 2 ways
+	1)Set Image
+	2)Edite Deployment
+-->kubectl set image deployment/<deployment-name> <container-name>=<container-image> --record=true	#updating deployment using SetImage method
+-->kubectl rollout status deployment/<deployment-name>	#used to verify the rollout status
+-->kubectl rollout history deployment/<deployment-name>	#check the rollout history of a deployment
+-->kubectl edit deployment/<deployment-name> --record=true	#edit deployment
+-->we can rollback a deployment in two ways
+	1)previous version
+	2)specific version
+-->kubectl rollout undo deployment/<deployment-name>	#undo deployment
+-->kubectl rollout undo deployment/<deployment-name> --to-revision={number}	#rollback to specific version 
+-->rolling restart will kill the existing pods and recreate new pods in a rolling passhion
+-->kubectl rollout restart deployment/<deployment-name>		#rolling restart
+-->kubectl rollout pause deployment/<deployment-name>	#pause the deployment
+-->kubectl rollout resume deployment/<deployment-name>	#resume the deployments
+-->kubectl delete deployment <deployment-name>	#delete deployment
+============================================================================================================================================================
+
+#kubernetes Services:
+=====================
+
+*clusterIP
+*NodePort
+*LoadBalancer
+*Ingress
+*externalName
+
+
+
+############################################################################################################################################################
+
+Cluster Information:
+====================
+->Show the Kubernetes version: kubectl version
+->Display cluster information: kubectl cluster-info
+->List all nodes in the cluster: kubectl get nodes
+->Describe a specific node: kubectl describe node <node-name>
+->List all namespaces: kubectl get namespaces
+->List all pods in all namespaces: kubectl get pods --all-namespaces
+
+Pod Diagnostics:
+================
+->List pods in a specific namespace: kubectl get pods -n <namespace>
+->Describe a pod: kubectl describe pod <pod-name> -n <namespace>
+->View pod logs: kubectl logs <pod-name> -n <namespace>
+->Tail pod logs: kubectl logs -f <pod-name> -n <namespace>
+->Execute a command in a pod: kubectl exec -it <pod-name> -n <namespace> -- <command>
+
+Pod Health Checks:
+==================
+->Check pod readiness: kubectl get pods <pod-name> -n <namespace> -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}'
+->Check pod events: kubectl get events -n <namespace> --field-selector involvedObject.name=<pod-name>
+
+Service Diagnostics:
+====================
+->List all services in a namespace: kubectl get svc -n <namespace>
+->Describe a service: kubectl describe svc <service-name> -n <namespace>
+
+Deployment Diagnostics:
+=======================
+->List all deployments in a namespace: kubectl get deployments -n <namespace>
+->Describe a deployment: kubectl describe deployment <deployment-name> -n <namespace>
+->View rollout status: kubectl rollout status deployment/<deployment-name> -n <namespace>
+->View rollout history: kubectl rollout history deployment/<deployment-name> -n <namespace>
+
+StatefulSet Diagnostics:
+========================
+->List all StatefulSets in a namespace: kubectl get statefulsets -n <namespace>
+->Describe a StatefulSet: kubectl describe statefulset <statefulset-name> -n <namespace>
+
+ConfigMap and Secret Diagnostics:
+=================================
+->List ConfigMaps in a namespace: kubectl get configmaps -n <namespace>
+->Describe a ConfigMap: kubectl describe configmap <configmap-name> -n <namespace>
+->List Secrets in a namespace: kubectl get secrets -n <namespace>
+->Describe a Secret: kubectl describe secret <secret-name> -n <namespace>
+
+Namespace Diagnostics:
+======================
+->Describe a namespace: kubectl describe namespace <namespace-name>
+
+Resource Usage:
+===============
+->Check resource usage for a pod: kubectl top pod <pod-name> -n <namespace>
+->Check resource usage for nodes: kubectl top nodes
+
+Networking Diagnostics:
+=======================
+->Show the IP addresses of pods in a namespace: kubectl get pods -n <namespace -o custom-columns=POD:metadata.name,IP:status.podIP --no-headers
+->List all network policies in a namespace: kubectl get networkpolicies -n <namespace>
+->Describe a network policy: kubectl describe networkpolicy <network-policy-name> -n <namespace>
+
+Persistent Volume (PV) and Persistent Volume Claim (PVC) Diagnostics:
+=====================================================================
+->List PVs: kubectl get pv
+->Describe a PV: kubectl describe pv <pv-name>
+->List PVCs in a namespace: kubectl get pvc -n <namespace>
+->Describe a PVC: kubectl describe pvc <pvc-name> -n <namespace>
+
+Node Diagnostics:
+==================
+->Get the list of pods running on a specific node: kubectl get pods --field-selector spec.nodeName=<node-name> -n <namespace>
+
+Resource Quotas and Limits:
+===========================
+->List resource quotas in a namespace: kubectl get resourcequotas -n <namespace>
+->Describe a resource quota: kubectl describe resourcequota <resource-quota-name> -n <namespace>
+
+Custom Resource Definitions (CRD) Diagnostics:
+==============================================
+->List custom resources in a namespace: kubectl get <custom-resource-name> -n <namespace>
+->Describe a custom resource: kubectl describe <custom-resource-name> <custom-resource-instance-name> -n <namespace>
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Remember to replace <namespace>, <pod-name>, <service-name>, <deployment-name>, <statefulset-name>, <configmap-name>, <secret-name>, <namespace-name>, <pv-         name>, <pvc-name>, <node-name>, <network-policy-name>, <resource-quota-name>, <custom-resource-name>, and <custom-resource-instance-name> with your specific values when using these commands. These commands should help you diagnose various aspects of your Kubernetes cluster and applications running within it.
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Resource Scaling and Autoscaling:
+=================================
+->Scale a deployment: kubectl scale deployment <deployment-name> --replicas=<replica-count> -n <namespace>
+->Set autoscaling for a deployment: kubectl autoscale deployment <deployment-name> --min=<min-pods> --max=<max-pods> --cpu-percent=<cpu-percent> -n <namespace>
+->Check horizontal pod autoscaler status: kubectl get hpa -n <namespace>
+
+Job and CronJob Diagnostics:
+============================
+->List all jobs in a namespace: kubectl get jobs -n <namespace>
+->Describe a job: kubectl describe job <job-name> -n <namespace>
+->List all cron jobs in a namespace: kubectl get cronjobs -n <namespace>
+->Describe a cron job: kubectl describe cronjob <cronjob-name> -n <namespace>
+
+Volume Diagnostics:
+===================
+->List persistent volumes (PVs) sorted by capacity: kubectl get pv --sort-by=.spec.capacity.storage
+->Check PV reclaim policy: kubectl get pv <pv-name> -o=jsonpath='{.spec.persistentVolumeReclaimPolicy}'
+->List all storage classes: kubectl get storageclasses
+
+Ingress and Service Mesh Diagnostics:
+=====================================
+->List all ingresses in a namespace: kubectl get ingress -n <namespace>
+->Describe an ingress: kubectl describe ingress <ingress-name> -n <namespace>
+->List all VirtualServices (Istio) in a namespace: kubectl get virtualservices -n <namespace>
+->Describe a VirtualService (Istio): kubectl describe virtualservice <virtualservice-name> -n <namespace>
+
+Pod Network Troubleshooting:
+============================
+->Run a network diagnostic pod (e.g., busybox) for debugging: kubectl run -it --rm --restart=Never --image=busybox net-debug-pod -- /bin/sh
+->Test connectivity from a pod to a specific endpoint: kubectl exec -it <pod-name> -n <namespace> -- curl <endpoint-url>
+->Trace network path from one pod to another: kubectl exec -it <source-pod-name> -n <namespace> -- traceroute <destination-pod-ip>
+->Check DNS resolution from a pod: kubectl exec -it <pod-name> -n <namespace> -- nslookup <domain-name>
+
+Config and Resource Validation:
+===============================
+->Validate a Kubernetes YAML file without applying it: kubectl apply --dry-run=client -f <yaml-file>
+->Validate a pod’s security context and capabilities: kubectl auth can-i list pods --as=system:serviceaccount:<namespace>:<serviceaccount-name>
+
+RBAC and Security:
+===================
+->List roles and role bindings in a namespace: kubectl get roles,rolebindings -n <namespace>
+->Describe a role or role binding: kubectl describe role <role-name> -n <namespace>
+
+Service Account Diagnostics:
+============================
+->List service accounts in a namespace: kubectl get serviceaccounts -n <namespace>
+->Describe a service account: kubectl describe serviceaccount <serviceaccount-name> -n <namespace>
+
+Node Drain and Uncordon:
+=========================
+->Drain a node for maintenance: kubectl drain <node-name> --ignore-daemonsets
+->Uncordon a previously drained node: kubectl uncordon <node-name>
+
+Resource Cleanup:
+=================
+->Delete a pod forcefully (not recommended): kubectl delete pod <pod-name> -n <namespace> --grace-period=0 --force
+
+Pod Affinity and Anti-Affinity:
+===============================
+->List pod affinity rules for a pod: kubectl get pod <pod-name> -n <namespace> -o=jsonpath='{.spec.affinity}'
+->List pod anti-affinity rules for a pod: kubectl get pod <pod-name> -n <namespace> -o=jsonpath='{.spec.affinity.podAntiAffinity}'
+
+Pod Security Policies (PSP):
+============================
+->List all pod security policies (if enabled): kubectl get psp
+
+Kubernetes Events:
+==================
+->View recent cluster events: kubectl get events --sort-by=.metadata.creationTimestamp
+->Filter events by a specific namespace: kubectl get events -n <namespace>
+
+Node Troubleshooting:
+=====================
+->Check node conditions: kubectl describe node <node-name> | grep Conditions -A5
+->List node capacity and allocatable resources: kubectl describe node <node-name> | grep -E "Capacity|Allocatable"
+
+Ephemeral Containers (Kubernetes 1.18+):
+========================================
+->Run an ephemeral debugging container: kubectl debug -it <pod-name> -n <namespace> --image=<debug-image> -- /bin/sh
+
+Resource Metrics (Metrics Server required):
+===========================================
+->Get CPU and Memory usage for pods: kubectl top pod -n <namespace>
+
+Kubelet Diagnostics:
+====================
+->View kubelet logs on a node: kubectl logs -n kube-system kubelet-<node-name>
+
+Advanced Debugging with Telepresence:
+=====================================
+->Debug a pod with Telepresence: telepresence --namespace <namespace> --swap-deployment <pod-name>
+
+Kubeconfig and Contexts:
+========================
+->List available contexts: kubectl config get-contexts
+->Switch to a different context: kubectl config use-context <context-name>
+
+Pod Security Standards (PodSecurity admission controller):
+===========================================================
+->List PodSecurityPolicy (PSP) violations: kubectl get psp -A | grep -vE 'NAME|REVIEWED'
+
+Pod Disruption Budget (PDB) Diagnostics:
+========================================
+->List all PDBs in a namespace: kubectl get pdb -n <namespace>
+->Describe a PDB: kubectl describe pdb <pdb-name> -n <namespace>
+
+Resource Lock Diagnostics (if using resource locks):
+====================================================
+->List resource locks in a namespace: kubectl get resourcelocks -n <namespace>
+
+Service Endpoints and DNS:
+==========================
+->List service endpoints for a service: kubectl get endpoints <service-name> -n <namespace>
+->Check DNS configuration in a pod: kubectl exec -it <pod-name> -n <namespace> -- cat /etc/resolv.conf
+
+Custom Metrics (Prometheus, Grafana):
+=====================================
+->Query Prometheus metrics: Use kubectl port-forward to access Prometheus and Grafana services to query custom metrics.
+
+Pod Priority and Preemption:
+============================
+->List priority classes: kubectl get priorityclasses
+
+Pod Overhead (Kubernetes 1.18+):
+================================
+->List overhead in a pod: kubectl get pod <pod-name> -n <namespace> -o=jsonpath='{.spec.overhead}'
+
+Volume Snapshot Diagnostics (if using volume snapshots):
+========================================================
+->List volume snapshots: kubectl get volumesnapshot -n <namespace>
+->Describe a volume snapshot: kubectl describe volumesnapshot <snapshot-name> -n <namespace>
+
+Resource Deserialization Diagnostics:
+=====================================
+->Deserialize and print a Kubernetes resource: kubectl get <resource-type> <resource-name> -n <namespace> -o=json
+
+Node Taints:
+============
+->List node taints: kubectl describe node <node-name> | grep Taints
+
+Mutating and Validating Webhook Configurations:
+===============================================
+->List mutating webhook configurations: kubectl get mutatingwebhookconfigurations
+->List validating webhook configurations: kubectl get validatingwebhookconfigurations
+
+Pod Network Policies:
+=====================
+->List pod network policies in a namespace: kubectl get networkpolicies -n <namespace>
+
+Node Conditions (Kubernetes 1.17+):
+===================================
+->List node conditions: kubectl get nodes -o custom-columns=NODE:.metadata.name,READY:.status.conditions[?(@.type=="Ready")].status -l 'node-role.kubernetes.io/worker='
+
+Audit Logs:
+===========
+->Retrieve audit logs (if enabled): Check your Kubernetes audit log configuration for the location of audit logs.
+
+Node Operating System Details:
+==============================
+->Get the node’s OS information: kubectl get node <node-name> -o jsonpath='{.status.nodeInfo.osImage}'
+
+List All Running Pods in All Namespaces (Short Command):
+========================================================
+->List all running pods in all namespaces in a short format: kubectl get pods --all-namespaces
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+These commands should cover a wide range of diagnostics scenarios in Kubernetes. Make sure to replace placeholders like <namespace>, <pod-name>, <deployment-name>, etc., with actual values specific to your cluster and use case.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
