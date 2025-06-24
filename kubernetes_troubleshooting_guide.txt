@@ -1,0 +1,747 @@
+Kubernetes Troubleshooting Guide (Component by Component: Beginner to Advanced)
+
+1. Node Level:
+    1) Check node status: 
+    >kubectl get nodes
+    2) Inspect node conditions: 
+    >kubectl describe node <node-name>
+    3) Verify kubelet is running: 
+    >systemctl status kubelet
+    4) Check disk, memory, and CPU usage: 
+    >top
+    >df -h
+    >free -m
+    5) Review node logs: 
+    >journalctl -u kubelet
+    6) Check node labels and taints:
+    >kubectl get node <node-name> -o jsonpath='{.metadata.labels}'
+    >kubectl get node <node-name> -o jsonpath='{.spec.taints}'
+    7) Check node resource allocation:
+    >kubectl get node <node-name> -o jsonpath='{.status.allocatable}'
+    8) Check node pod CIDR:
+    >kubectl get node <node-name> -o jsonpath='{.spec.podCIDR}'
+    9) Check node IP addresses:
+    >kubectl get node <node-name> -o jsonpath='{.status.addresses}'
+    10) Check node kubelet version:
+    >kubectl get node <node-name> -o jsonpath='{.status.nodeInfo.kubeletVersion}'
+    11) Check node kernel version:
+    >kubectl get node <node-name> -o jsonpath='{.status.nodeInfo.kernelVersion}'
+    12) Check node OS image:
+    >kubectl get node <node-name> -o jsonpath='{.status.nodeInfo.osImage}'
+    13) Check node container runtime:
+    >kubectl get node <node-name> -o jsonpath='{.status.nodeInfo.containerRuntimeVersion}'
+    14) Check node network plugin:
+    >kubectl get pods -n kube-system -l k8s-app=cni-plugin
+    15) Check node kube-proxy status:
+    >kubectl get pods -n kube-system -l k8s-app=kube-proxy
+    16) Check node kubelet configuration:
+    >kubectl get node <node-name> -o jsonpath='{.spec.kubeletConfig}'   
+    17) Check node kube-proxy configuration:
+    >kubectl get node <node-name> -o jsonpath='{.spec.kubeProxyConfig}'
+    18) Check node kubelet logs:
+    >kubectl logs -n kube-system -l k8s-app=kubelet 
+    19) Check node kube-proxy logs:
+    >kubectl logs -n kube-system -l k8s-app=kube-proxy
+    20) Check node network connectivity:
+    >kubectl exec -it <pod-name> -n <namespace> -- ping <another-pod-ip>    
+    21) Check node DNS resolution:
+    >kubectl exec -it <pod-name> -n <namespace> -- nslookup <service-name>
+    22) Check node firewall rules:
+    >iptables -L -n
+    23) Check node SELinux/AppArmor status:
+    >sestatus
+    >aa-status  
+    24) Check node system logs:
+    >journalctl -u kubelet
+    25) Check node kubelet health:
+    >kubectl get --raw "/healthz"
+    26) Check node kubelet metrics:
+    >kubectl get --raw "/metrics"
+    27) Check node kubelet configuration file:
+    >kubectl get --raw "/configz"
+    28) Check node kubelet authentication and authorization:
+    >kubectl get --raw "/authz"
+    29) Check node kubelet admission controllers:
+    >kubectl get --raw "/admission"
+    30) Check node kubelet runtime configuration:
+    >kubectl get --raw "/runtime"
+    31) Check node kubelet runtime status:
+    >kubectl get --raw "/runtime/status"
+    32) Check node kubelet runtime metrics:
+    >kubectl get --raw "/runtime/metrics"
+    33) Check node kubelet runtime logs:
+    >kubectl logs -n kube-system -l k8s-app=kubelet
+    
+
+2. Pod Level:
+    1) Check pod status & List pods and their status: 
+    >kubectl get pods -A 
+    3) Describe a problematic pod: 
+    >kubectl describe pod <pod-name> -n <namespace>
+    4) View pod logs: 
+    >kubectl logs <pod-name> -n <namespace>
+    5) For multi-container pods: 
+    >kubectl logs <pod-name> -c <container-name>
+    6) Check pod YAML configuration: 
+    >kubectl get pod <pod-name> -n <namespace> -o yaml
+    7) Get previous pod logs (if available): 
+    >kubectl logs <pod-name> -n <namespace> --previous
+    8) Check pod events: 
+    >kubectl get events -n <namespace> --sort-by=.metadata.creationTimestamp
+    9) Check pod resource limits and requests: 
+    >kubectl get pod <pod-name> -n <namespace> -o jsonpath='{.spec.containers[*].resources}'
+    >kubectl describe pod <pod-name> -n <namespace> | grep -i 'limits\|requests'    
+    10) Check pod status for more details: 
+    >kubectl get pods -o wide -n <namespace>
+    11) Check pod IP and node assignment:
+    >kubectl get pod <pod-name> -o jsonpath='{.status.podIP}' -n <namespace>
+    >kubectl get pod <pod-name> -o jsonpath='{.spec.nodeName}' -n <namespace>
+    12) Check pod readiness and liveness probes:
+    >kubectl get pod <pod-name> -n <namespace> -o jsonpath='{.spec.containers[*].readinessProbe}'
+    >kubectl get pod <pod-name> -n <namespace> -o jsonpath='{.spec.containers[*].livenessProbe}'
+    13) Check for stuck pods (e.g., pending, terminating):
+    >kubectl get pods -n <namespace> --field-selector=status.phase=Pending
+    >kubectl get pods -n <namespace> --field-selector=status.phase=Terminating
+    14) Check for pod restarts:
+    >kubectl get pods -n <namespace> --sort-by='.status.containerStatuses[0].restartCount'
+    15) Check for pod security context issues:
+    >kubectl get pod <pod-name> -n <namespace> -o jsonpath='{.spec.securityContext}'
+    16) Check for pod affinity/anti-affinity issues:
+    >kubectl get pod <pod-name> -n <namespace> -o jsonpath='{.spec.affinity}'
+    >kubectl describe pod <pod-name> -n <namespace> | grep -i 'affinity\|anti-affinity'
+    17) Check for pod scheduling issues:
+    >kubectl get pod <pod-name> -n <namespace> -o jsonpath='{.spec.schedulerName}'
+    18) Check for pod resource constraints:
+    >kubectl get pod <pod-name> -n <namespace> -o jsonpath='{.spec.containers[*].resources}'
+    19) Check for pod network issues:
+    >kubectl exec -it <pod-name> -n <namespace> -- ping <another-pod-ip>
+    20) Check for pod DNS resolution issues:
+    >kubectl exec -it <pod-name> -n <namespace> -- nslookup <service-name>
+    21) Check for pod volume mount issues:
+    >kubectl get pod <pod-name> -n <namespace> -o jsonpath='{.spec.volumes}'
+    22) Check for pod init container issues:
+    >kubectl get pod <pod-name> -n <namespace> -o jsonpath='{.spec.initContainers}'
+    23) Check for pod termination grace period issues:
+    >kubectl get pod <pod-name> -n <namespace> -o jsonpath='{.spec.terminationGracePeriodSeconds}'
+    24) Check for pod lifecycle hooks issues:
+    >kubectl get pod <pod-name> -n <namespace> -o jsonpath='{.spec.lifecycle}'
+    25) Check for pod security policies issues:
+    >kubectl get pod <pod-name> -n <namespace> -o jsonpath='{.spec.securityContext}'
+    26) Check for pod resource quota issues:
+    >kubectl get pod <pod-name> -n <namespace> -o jsonpath='{.spec.resourceQuota}'
+    27) Check for pod node affinity/anti-affinity issues:
+    >kubectl get pod <pod-name> -n <namespace> -o jsonpath='{.spec.affinity}'
+    28) Check for pod taints and tolerations issues:
+    >kubectl get pod <pod-name> -n <namespace> -o jsonpath='{.spec.tolerations}'    
+    29) Check for pod admission controller issues:
+    >kubectl get pod <pod-name> -n <namespace> -o jsonpath='{.spec.admissionReview}'    
+    30) Check for pod custom resource definition (CRD) issues:
+    >kubectl get pod <pod-name> -n <namespace> -o jsonpath='{.spec.customResourceDefinition}'
+    31) Check for pod custom scheduler issues:
+    >kubectl get pod <pod-name> -n <namespace> -o jsonpath='{.spec.schedulerName}'
+    32) Check for pod custom controller issues:
+    >kubectl get pod <pod-name> -n <namespace> -o jsonpath='{.spec.controllerName}'
+    33) Check for pod custom admission webhook issues:
+    >kubectl get validatingwebhookconfigurations,mutatingwebhookconfigurations -A
+    >kubectl describe validatingwebhookconfiguration <webhook-name>
+    34) Check for pod custom resource issues:
+    >kubectl get customresourcedefinitions -A
+    >kubectl describe customresourcedefinition <crd-name>   
+    35) Check for pod custom resource validation issues:
+    >kubectl get pod <pod-name> -n <namespace> -o jsonpath='{.spec.validation}'
+    36) Check for pod custom resource conversion issues:
+    >kubectl get pod <pod-name> -n <namespace> -o jsonpath='{.spec.conversion}'
+    37) Check for pod custom resource subresources issues:
+    >kubectl get pod <pod-name> -n <namespace> -o jsonpath='{.spec.subresources}'
+    38) Check for pod custom resource scale issues:
+    >kubectl get pod <pod-name> -n <namespace> -o jsonpath='{.spec.scale}'
+
+
+3. Deployment/ReplicaSet Level:
+    1) Check deployment status: 
+    >kubectl get deployments -A
+    2) Describe deployment: 
+    >kubectl describe deployment <deployment-name> -n <namespace>
+    3) Inspect ReplicaSets: 
+    >kubectl get rs -n <namespace>
+    4) Rollback deployment if needed: 
+    >kubectl rollout undo deployment/<deployment-name> -n <namespace>
+    5) Check deployment history: 
+    >kubectl rollout history deployment/<deployment-name> -n <namespace>
+    6) Check deployment events: 
+    >kubectl get events -n <namespace> --sort-by=.metadata.creationTimestamp
+    7) Check deployment YAML configuration: 
+    >kubectl get deployment <deployment-name> -n <namespace> -o yaml
+    8) Check deployment resource limits and requests: 
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.spec.containers[*].resources}'
+    9) Check deployment pod template:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template}'
+    10) Check deployment strategy:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.strategy}'
+    11) Check deployment labels and selectors:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.selector}'
+    12) Check deployment annotations:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.metadata.annotations}'
+    13) Check deployment status conditions:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.status.conditions}'
+    14) Check deployment scaling issues:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.replicas}'
+    15) Check deployment pod readiness and liveness probes:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.spec.containers[*].livenessProbe}'
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.spec.containers[*].readinessProbe}'
+    16) Check deployment pod affinity/anti-affinity:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.spec.affinity}'
+    17) Check deployment pod tolerations:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.spec.tolerations}'
+    18) Check deployment pod security context:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.spec.securityContext}'
+    19) Check deployment pod node selector:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.spec.nodeSelector}'
+    20) Check deployment pod service account:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.spec.serviceAccountName}'
+    21) Check deployment pod image pull secrets:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.spec.imagePullSecrets}'
+    22) Check deployment pod volumes:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.spec.volumes}'
+    23) Check deployment pod init containers:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.spec.initContainers}'
+    24) Check deployment pod lifecycle hooks:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.spec.containers[*].lifecycle}'
+    25) Check deployment pod DNS policy:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.spec.dnsPolicy}'
+    26) Check deployment pod host network settings:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.spec.hostNetwork}'
+    27) Check deployment pod host PID settings:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.spec.hostPID}'
+    28) Check deployment pod host IPC settings:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.spec.hostIPC}'
+    29) Check deployment pod priority class:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.spec.priorityClassName}'
+    30) Check deployment pod topology spread constraints:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.spec.topologySpreadConstraints}'
+    31) Check deployment pod resource quotas:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.spec.resources.limits}'
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.spec.resources.requests}'
+    32) Check deployment pod custom resource definitions (CRDs):
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.spec.customResourceDefinitions}'
+    33) Check deployment pod custom resource validation:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.spec.customResourceValidation}'
+    34) Check deployment pod custom resource conversion:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.spec.customResourceConversion}'
+    35) Check deployment pod custom resource subresources:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.spec.customResourceSubresources}'
+    36) Check deployment pod custom resource scale:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.spec.customResourceScale}'
+    37) Check deployment pod custom resource status:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.spec.customResourceStatus}'
+    38) Check deployment pod custom resource conditions:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.spec.customResourceConditions}'
+    39) Check deployment pod custom resource metadata:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.metadata}'
+    40) Check deployment pod custom resource labels:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.metadata.labels}'
+    41) Check deployment pod custom resource annotations:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.metadata.annotations}'
+    42) Check deployment pod custom resource owner references:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.metadata.ownerReferences}'
+    43) Check deployment pod custom resource finalizers:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.metadata.finalizers}'
+    44) Check deployment pod custom resource generation:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.metadata.generation}'
+    45) Check deployment pod custom resource UID:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.metadata.uid}'
+    46) Check deployment pod custom resource resourceVersion:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.metadata.resourceVersion}'
+    47) Check deployment pod custom resource creationTimestamp:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.metadata.creationTimestamp}'
+    48) Check deployment pod custom resource deletionTimestamp:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.metadata.deletionTimestamp}'  
+    49) Check deployment pod custom resource deletionGracePeriodSeconds:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.metadata.deletionGracePeriodSeconds}'
+    50) Check deployment pod custom resource finalizers:
+    >kubectl get deployment <deployment-name> -n <namespace> -o jsonpath='{.spec.template.metadata.finalizers}'
+
+
+4. Service Level:
+    1) List services: 
+    >kubectl get svc -A
+    2) Describe service: 
+    >kubectl describe svc <service-name> -n <namespace>
+    3) Check endpoints: 
+    >kubectl get endpoints -n <namespace>
+    4) Test service connectivity: 
+    >kubectl exec -it <pod-name> -- curl <service-name>:<port>
+    5) Check service YAML configuration: 
+    >kubectl get svc <service-name> -n <namespace> -o yaml
+    6) Check service type (ClusterIP, NodePort, LoadBalancer):
+    >kubectl get svc <service-name> -n <namespace> -o jsonpath='{.spec.type}'
+    7) Check service selector and labels:
+    >kubectl get svc <service-name> -n <namespace> -o jsonpath='{.spec.selector}'
+    8) Check service annotations:
+    >kubectl get svc <service-name> -n <namespace> -o jsonpath='{.metadata.annotations}'
+    9) Check service ports and target ports:
+    >kubectl get svc <service-name> -n <namespace> -o jsonpath='{.spec.ports}'
+    10) Check service cluster IP:
+    >kubectl get svc <service-name> -n <namespace> -o jsonpath='{.spec.clusterIP}'
+    11) Check service external IP (if applicable):
+    >kubectl get svc <service-name> -n <namespace> -o jsonpath='{.status.loadBalancer.ingress[0].ip}'   
+    12) Check service session affinity:
+    >kubectl get svc <service-name> -n <namespace> -o jsonpath='{.spec.sessionAffinity}'
+    13) Check service health checks (if configured):
+    >kubectl get svc <service-name> -n <namespace> -o jsonpath='{.spec.healthCheckNodePort}'
+    14) Check service resource limits and requests:
+    >kubectl get svc <service-name> -n <namespace> -o jsonpath='{.spec.resources}'
+    15) Check service DNS resolution:
+    >kubectl get svc <service-name> -n <namespace> -o jsonpath='{.spec.clusterIP}'  
+    16) Check service load balancer status (if applicable):
+    >kubectl get svc <service-name> -n <namespace> -o jsonpath='{.status.loadBalancer}'
+    17) Check service external traffic policy (if applicable):
+    >kubectl get svc <service-name> -n <namespace> -o jsonpath='{.spec.externalTrafficPolicy}'
+    18) Check service topology keys (if applicable):
+    >kubectl get svc <service-name> -n <namespace> -o jsonpath='{.spec.topologyKeys}'
+    19) Check service IP family (if applicable):
+    >kubectl get svc <service-name> -n <namespace> -o jsonpath='{.spec.ipFamily}'   
+    20) Check service IP family policy (if applicable):
+    >kubectl get svc <service-name> -n <namespace> -o jsonpath='{.spec.ipFamilyPolicy}'
+    21) Check service external name (if applicable):
+    >kubectl get svc <service-name> -n <namespace> -o jsonpath='{.spec.externalName}'   
+    22) Check service internal traffic policy (if applicable):
+    >kubectl get svc <service-name> -n <namespace> -o jsonpath='{.spec.internalTrafficPolicy}'
+    23) Check service topology aware routing (if applicable):
+    >kubectl get svc <service-name> -n <namespace> -o jsonpath='{.spec.topologyAwareRouting}'   
+    24) Check service custom resource definitions (CRDs):
+    >kubectl get customresourcedefinitions -A
+    >kubectl describe customresourcedefinition <crd-name>
+    25) Check service custom resource validation:
+    >kubectl get <crd-name> -n <namespace> -o jsonschema
+    26) Check service custom resource conversion:
+    >kubectl get <crd-name> -n <namespace> -o jsonpath='{.spec.conversion}'
+    27) Check service custom resource subresources:
+    >kubectl get <crd-name> -n <namespace> -o jsonpath='{.spec.subresources}'   
+    28) Check service custom resource scale:
+    >kubectl get <crd-name> -n <namespace> -o jsonpath='{.spec.scale}'
+    29) Check service custom resource status:
+    >kubectl get <crd-name> -n <namespace> -o jsonpath='{.status}'
+    30) Check service custom resource conditions:
+    >kubectl get <crd-name> -n <namespace> -o jsonpath='{.status.conditions}'
+    31) Check service custom resource metadata: 
+    >kubectl get <crd-name> -n <namespace> -o jsonpath='{.metadata}'
+    32) Check service custom resource labels:
+    >kubectl get <crd-name> -n <namespace> -o jsonpath='{.metadata.labels}'
+    33) Check service custom resource annotations:
+    >kubectl get <crd-name> -n <namespace> -o jsonpath='{.metadata.annotations}'
+    34) Check service custom resource owner references:
+    >kubectl get <crd-name> -n <namespace> -o jsonpath='{.metadata.ownerReferences}'    
+
+5. Ingress/Network Level:
+    1) List ingress resources: 
+    >kubectl get ingress -A
+    2) Describe ingress: 
+    >kubectl describe ingress <ingress-name> -n <namespace>
+    3) Check ingress controller logs: 
+    >kubectl logs <controller-pod> -n <namespace>
+    4) Verify network policies: 
+    >kubectl get networkpolicy -A
+    5) Test DNS resolution: 
+    >kubectl exec -it <pod-name> -- nslookup <service-name>
+    6) Check ingress YAML configuration: 
+    >kubectl get ingress <ingress-name> -n <namespace> -o yaml
+    7) Check ingress rules and paths:
+    >kubectl get ingress <ingress-name> -n <namespace> -o jsonpath='{.spec.rules}'
+    8) Check ingress backend services:
+    >kubectl get ingress <ingress-name> -n <namespace> -o jsonpath='{.spec.backend}'
+    9) Check ingress annotations:
+    >kubectl get ingress <ingress-name> -n <namespace> -o jsonpath='{.metadata.annotations}'
+    10) Check ingress TLS configuration:
+    >kubectl get ingress <ingress-name> -n <namespace> -o jsonpath='{.spec.tls}'
+    11) Check ingress class:
+    >kubectl get ingress <ingress-name> -n <namespace> -o jsonpath='{.spec.ingressClassName}'
+    12) Check ingress status:
+    >kubectl get ingress <ingress-name> -n <namespace> -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
+    13) Check ingress resource limits and requests:
+    >kubectl get ingress <ingress-name> -n <namespace> -o jsonpath='{.spec.resources}'  
+    14) Check ingress custom resource definitions (CRDs):
+    >kubectl get customresourcedefinitions -A   
+    >kubectl describe customresourcedefinition <crd-name>
+    15) Check ingress custom resource validation:   
+    >kubectl get <crd-name> -n <namespace> -o jsonschema
+    16) Check ingress custom resource conversion:
+    >kubectl get <crd-name> -n <namespace> -o jsonpath='{.spec.conversion}'
+    17) Check ingress custom resource subresources:
+    >kubectl get <crd-name> -n <namespace> -o jsonpath='{.spec.subresources}'
+    18) Check ingress custom resource scale:
+    >kubectl get <crd-name> -n <namespace> -o jsonpath='{.spec.scale}'  
+    19) Check ingress custom resource status:
+    >kubectl get <crd-name> -n <namespace> -o jsonpath='{.status}'
+    20) Check ingress custom resource conditions:
+    >kubectl get <crd-name> -n <namespace> -o jsonpath='{.status.conditions}'
+    21) Check ingress custom resource metadata:
+    >kubectl get <crd-name> -n <namespace> -o jsonpath='{.metadata}'
+    22) Check ingress custom resource labels:
+    >kubectl get <crd-name> -n <namespace> -o jsonpath='{.metadata.labels}'
+    23) Check ingress custom resource annotations:
+    >kubectl get <crd-name> -n <namespace> -o jsonpath='{.metadata.annotations}'
+    24) Check ingress custom resource owner references:
+    >kubectl get <crd-name> -n <namespace> -o jsonpath='{.metadata.ownerReferences}'    
+    25) Check ingress custom resource finalizers:
+    >kubectl get <crd-name> -n <namespace> -o jsonpath='{.metadata.finalizers}'
+    26) Check ingress custom resource generation:
+    >kubectl get <crd-name> -n <namespace> -o jsonpath='{.metadata.generation}'
+    27) Check ingress custom resource UID:
+    >kubectl get <crd-name> -n <namespace> -o jsonpath='{.metadata.uid}'
+
+
+6. ConfigMap & Secret Level:
+    1) List ConfigMaps and Secrets: 
+    >kubectl get configmap,secret -A
+    2) Describe ConfigMap/Secret: 
+    >kubectl describe configmap <name> -n <namespace>
+    3) Check if mounted/used in pods: Inspect pod spec or describe pod
+    >kubectl describe pod <pod-name> -n <namespace> | grep -i 'configmap\|secret'
+    4) Check ConfigMap/Secret YAML configuration: 
+    >kubectl get configmap <name> -n <namespace> -o yaml
+    >kubectl get secret <name> -n <namespace> -o yaml
+    5) Check ConfigMap/Secret data: 
+    >kubectl get configmap <name> -n <namespace> -o jsonpath='{.data}'
+    >kubectl get secret <name> -n <namespace> -o jsonpath='{.data}'
+    6) Check ConfigMap/Secret labels and annotations:
+    >kubectl get configmap <name> -n <namespace> -o jsonpath='{.metadata.labels}'
+    >kubectl get secret <name> -n <namespace> -o jsonpath='{.metadata.labels}'
+    >kubectl get configmap <name> -n <namespace> -o jsonpath='{.metadata.annotations}'
+    >kubectl get secret <name> -n <namespace> -o jsonpath='{.metadata.annotations}'
+    7) Check ConfigMap/Secret owner references:
+    >kubectl get configmap <name> -n <namespace> -o jsonpath='{.metadata.ownerReferences}'
+    >kubectl get secret <name> -n <namespace> -o jsonpath='{.metadata.ownerReferences}'
+    8) Check ConfigMap/Secret finalizers:
+    >kubectl get configmap <name> -n <namespace> -o jsonpath='{.metadata.finalizers}'
+    >kubectl get secret <name> -n <namespace> -o jsonpath='{.metadata.finalizers}'
+    9) Check ConfigMap/Secret generation:
+    >kubectl get configmap <name> -n <namespace> -o jsonpath='{.metadata.generation}'
+    >kubectl get secret <name> -n <namespace> -o jsonpath='{.metadata.generation}'
+    10) Check ConfigMap/Secret UID:
+    >kubectl get configmap <name> -n <namespace> -o jsonpath='{.metadata.uid}'
+    >kubectl get secret <name> -n <namespace> -o jsonpath='{.metadata.uid}'
+    11) Check ConfigMap/Secret resourceVersion:
+    >kubectl get configmap <name> -n <namespace> -o jsonpath='{.metadata.resourceVersion}'
+    >kubectl get secret <name> -n <namespace> -o jsonpath='{.metadata.resourceVersion}'
+    12) Check ConfigMap/Secret creationTimestamp:
+    >kubectl get configmap <name> -n <namespace> -o jsonpath='{.metadata.creationTimestamp}'
+    >kubectl get secret <name> -n <namespace> -o jsonpath='{.metadata.creationTimestamp}'
+    13) Check ConfigMap/Secret deletionTimestamp:
+    >kubectl get configmap <name> -n <namespace> -o jsonpath='{.metadata.deletionTimestamp}'
+    >kubectl get secret <name> -n <namespace> -o jsonpath='{.metadata.deletionTimestamp}'
+    14) Check ConfigMap/Secret deletionGracePeriodSeconds:
+    >kubectl get configmap <name> -n <namespace> -o jsonpath='{.metadata.deletionGracePeriodSeconds}'
+    >kubectl get secret <name> -n <namespace> -o jsonpath='{.metadata.deletionGracePeriodSeconds}'
+    15) Check ConfigMap/Secret data encoding (for secrets):
+    >kubectl get secret <name> -n <namespace> -o jsonpath='{.data}' | jq 'to_entries | map_values(@base64d)'
+    16) Check ConfigMap/Secret data size (for secrets):
+    >kubectl get secret <name> -n <namespace> -o jsonpath='{.data}' | jq 'to_entries | map_values(@base64d) | map(length) | add'
+    17) Check ConfigMap/Secret data keys:
+    >kubectl get configmap <name> -n <namespace> -o jsonpath='{.data}' | jq 'keys'
+    >kubectl get secret <name> -n <namespace> -o jsonpath='{.data}' | jq 'keys'
+    18) Check ConfigMap/Secret data values:
+    >kubectl get configmap <name> -n <namespace> -o jsonpath='{.data}' | jq 'map_values(@base64d)'
+    >kubectl get secret <name> -n <namespace> -o jsonpath='{.data}' | jq 'map_values(@base64d)'
+    19) Check ConfigMap/Secret data size limits:
+    - For ConfigMaps, the size limit is 1MB per ConfigMap.
+    - For Secrets, the size limit is 1MB per Secret.
+    20) Check ConfigMap/Secret data usage in pods:
+    >kubectl get pods -n <namespace> -o jsonpath='{.items[*].spec.volumes[?(@.configMap.name=="<configmap-name>")]}'
+    >kubectl get pods -n <namespace> -o jsonpath='{.items[*].spec.volumes[?(@.secret.secretName=="<secret-name>")]}'
+    21) Check ConfigMap/Secret data updates:
+    - For ConfigMaps, updates are automatically reflected in pods that use them.
+    - For Secrets, updates are automatically reflected in pods that use them.
+    22) Check ConfigMap/Secret data deletion:
+    - For ConfigMaps, deletion is automatically reflected in pods that use them.
+    - For Secrets, deletion is automatically reflected in pods that use them.
+    23) Check ConfigMap/Secret data creation:
+    - For ConfigMaps, creation is automatically reflected in pods that use them.
+    - For Secrets, creation is automatically reflected in pods that use them.
+    24) Check ConfigMap/Secret data updates:
+    - For ConfigMaps, updates are automatically reflected in pods that use them.
+    - For Secrets, updates are automatically reflected in pods that use them.
+
+7. Persistent Volume (PV) & Persistent Volume Claim (PVC) Level:
+    1) List PVs and PVCs: 
+    >kubectl get pv,pvc -A
+    2) Describe PV/PVC: 
+    >kubectl describe pv <pv-name>
+    >kubectl describe pvc <pvc-name> -n <namespace>
+    3) Check pod volume mounts: 
+    >kubectl describe pod <pod-name> -n <namespace> | grep -i 'persistentVolumeClaim\|volumeMounts'
+    4) Check PV status: 
+    >kubectl get pv <pv-name> -o jsonpath='{.status.phase}' 
+    5) Check PVC status:
+    >kubectl get pvc <pvc-name> -n <namespace> -o jsonpath='{.status.phase}'
+    6) Check PV/PVC YAML configuration:
+    >kubectl get pv <pv-name> -o yaml
+    >kubectl get pvc <pvc-name> -n <namespace> -o yaml
+    7) Check PV/PVC labels and annotations:
+    >kubectl get pv <pv-name> -o jsonpath='{.metadata.labels}'
+    >kubectl get pvc <pvc-name> -n <namespace> -o jsonpath='{.metadata.labels}'
+    >kubectl get pv <pv-name> -o jsonpath='{.metadata.annotations}'
+    >kubectl get pvc <pvc-name> -n <namespace> -o jsonpath='{.metadata.annotations}'
+    8) Check PV/PVC owner references:
+    >kubectl get pv <pv-name> -o jsonpath='{.metadata.ownerReferences}'
+    >kubectl get pvc <pvc-name> -n <namespace> -o jsonpath='{.metadata.ownerReferences}'
+    9) Check PV/PVC finalizers:
+    >kubectl get pv <pv-name> -o jsonpath='{.metadata.finalizers}'
+    >kubectl get pvc <pvc-name> -n <namespace> -o jsonpath='{.metadata.finalizers}'
+    10) Check PV/PVC generation:
+    >kubectl get pv <pv-name> -o jsonpath='{.metadata.generation}'
+    >kubectl get pvc <pvc-name> -n <namespace> -o jsonpath='{.metadata.generation}' 
+    11) Check PV/PVC UID:
+    >kubectl get pv <pv-name> -o jsonpath='{.metadata.uid}'
+    >kubectl get pvc <pvc-name> -n <namespace> -o jsonpath='{.metadata.uid}'
+    12) Check PV/PVC resourceVersion:
+    >kubectl get pv <pv-name> -o jsonpath='{.metadata.resourceVersion}'
+    >kubectl get pvc <pvc-name> -n <namespace> -o jsonpath='{.metadata.resourceVersion}'
+    13) Check PV/PVC creationTimestamp:
+    >kubectl get pv <pv-name> -o jsonpath='{.metadata.creationTimestamp}'
+    >kubectl get pvc <pvc-name> -n <namespace> -o jsonpath='{.metadata.creationTimestamp}'  
+    14) Check PV/PVC deletionTimestamp:
+    >kubectl get pv <pv-name> -o jsonpath='{.metadata.deletionTimestamp}'
+    >kubectl get pvc <pvc-name> -n <namespace> -o jsonpath='{.metadata.deletionTimestamp}'
+    15) Check PV/PVC deletionGracePeriodSeconds:
+    >kubectl get pv <pv-name> -o jsonpath='{.metadata.deletionGracePeriodSeconds}'
+    >kubectl get pvc <pvc-name> -n <namespace> -o jsonpath='{.metadata.deletionGracePeriodSeconds}' 
+    16) Check PV/PVC access modes:
+    >kubectl get pv <pv-name> -o jsonpath='{.spec.accessModes}'
+    >kubectl get pvc <pvc-name> -n <namespace> -o jsonpath='{.spec.accessModes}'
+    17) Check PV/PVC capacity:
+    >kubectl get pv <pv-name> -o jsonpath='{.spec.capacity}'
+    >kubectl get pvc <pvc-name> -n <namespace> -o jsonpath='{.spec.resources.requests.storage}' 
+    18) Check PV/PVC storage class:
+    >kubectl get pv <pv-name> -o jsonpath='{.spec.storageClassName}'
+    >kubectl get pvc <pvc-name> -n <namespace> -o jsonpath='{.spec.storageClassName}'
+    19) Check PV/PVC volume mode:
+    >kubectl get pv <pv-name> -o jsonpath='{.spec.volumeMode}'
+    >kubectl get pvc <pvc-name> -n <namespace> -o jsonpath='{.spec.volumeMode}' 
+    20) Check PV/PVC reclaim policy:
+    >kubectl get pv <pv-name> -o jsonpath='{.spec.persistentVolumeReclaimPolicy}'
+    >kubectl get pvc <pvc-name> -n <namespace> -o jsonpath='{.spec.persistentVolumeReclaimPolicy}'
+    21) Check PV/PVC mount options:
+    >kubectl get pv <pv-name> -o jsonpath='{.spec.mountOptions}'
+    >kubectl get pvc <pvc-name> -n <namespace> -o jsonpath='{.spec.mountOptions}'   
+    22) Check PV/PVC volume attributes:
+    >kubectl get pv <pv-name> -o jsonpath='{.spec.csi.volumeAttributes}'
+    >kubectl get pvc <pvc-name> -n <namespace> -o jsonpath='{.spec.volumeAttributes}'
+    23) Check PV/PVC storage capacity:
+    >kubectl get pv <pv-name> -o jsonpath='{.spec.capacity}'
+    >kubectl get pvc <pvc-name> -n <namespace> -o jsonpath='{.spec.resources.requests.storage}'
+    24) Check PV/PVC storage class parameters:
+    >kubectl get pv <pv-name> -o jsonpath='{.spec.storageClassName}'
+    >kubectl get pvc <pvc-name> -n <namespace> -o jsonpath='{.spec.storageClassName}'
+    25) Check PV/PVC storage class reclaim policy:
+    >kubectl get pv <pv-name> -o jsonpath='{.spec.persistentVolumeReclaimPolicy}'
+    >kubectl get pvc <pvc-name> -n <namespace> -o jsonpath='{.spec.persistentVolumeReclaimPolicy}'
+    26) Check PV/PVC storage class volume binding mode:
+    >kubectl get pv <pv-name> -o jsonpath='{.spec.volumeBindingMode}'
+    >kubectl get pvc <pvc-name> -n <namespace> -o jsonpath='{.spec.volumeBindingMode}'  
+    27) Check PV/PVC storage class allow volume expansion:
+    >kubectl get pv <pv-name> -o jsonpath='{.spec.allowVolumeExpansion}'
+    >kubectl get pvc <pvc-name> -n <namespace> -o jsonpath='{.spec.allowVolumeExpansion}'
+    28) Check PV/PVC storage class mount options:   
+    >kubectl get pv <pv-name> -o jsonpath='{.spec.mountOptions}'
+    >kubectl get pvc <pvc-name> -n <namespace> -o jsonpath='{.spec.mountOptions}'
+    29) Check PV/PVC storage class parameters:
+    >kubectl get pv <pv-name> -o jsonpath='{.spec.storageClassName}'
+    >kubectl get pvc <pvc-name> -n <namespace> -o jsonpath='{.spec.storageClassName}'
+    
+
+8. Advanced: Control Plane Components:
+    1) Check kube-apiserver, kube-controller-manager, kube-scheduler, etcd status (on master nodes)
+     View logs (example for kube-apiserver): 
+    >journalctl -u kube-apiserver
+    2) Check etcd health: 
+    >ETCDCTL_API=3 etcdctl --endpoints=<endpoint> endpoint health
+    - Inspect certificates and authentication issues
+    3) Check kubelet status on nodes:
+    >systemctl status kubelet   
+    4) Check kubelet logs:
+    >journalctl -u kubelet
+    5) Check kube-proxy status:
+    >kubectl get pods -n kube-system -l k8s-app=kube-proxy
+    6) Check kube-proxy logs:
+    >kubectl logs -n kube-system -l k8s-app=kube-proxy
+    7) Check kube-scheduler status:
+    >kubectl get pods -n kube-system -l component=kube-scheduler
+    8) Check kube-scheduler logs:
+    >kubectl logs -n kube-system -l component=kube-scheduler
+    9) Check kube-controller-manager status:
+    >kubectl get pods -n kube-system -l component=kube-controller-manager
+    10) Check kube-controller-manager logs:
+    >kubectl logs -n kube-system -l component=kube-controller-manager
+    11) Check cloud provider integration (if applicable):
+    - Verify cloud provider configuration in kube-controller-manager
+    >kubectl get configmap -n kube-system cloud-provider-config
+    12) Check API server metrics (if enabled):  
+    >kubectl get --raw /metrics | grep apiserver_request_total
+    13) Check API server authentication and authorization issues:
+    - Inspect API server logs for authentication errors:
+    >kubectl logs -n kube-system kube-apiserver-<node-name>
+    14) Check API server admission controllers:
+    - List enabled admission controllers:
+    >kubectl get --raw /api/v1/namespaces/kube-system/pods | jq '.items[].metadata.annotations."kubectl.kubernetes.io/admission-controller"'    
+    15) Check API server API groups and versions:
+    >kubectl get --raw /api | jq '.'    
+    16) Check API server API discovery:
+    >kubectl get --raw /apis | jq '.'
+    17) Check API server API resources:
+    >kubectl get --raw /api/v1 | jq '.resources'
+    18) Check API server API versions:
+    >kubectl get --raw /api/v1 | jq '.versions'
+    19) Check API server API groups:
+    >kubectl get --raw /api | jq '.groups'
+    `
+
+9. Advanced: Cluster Networking:
+    1) Check CNI plugin status (e.g., Calico, Flannel):
+    - Validate CNI plugin status: 
+    >kubectl get pods -n kube-system
+    2) Check CNI logs: 
+    >kubectl logs <cni-pod> -n kube-system
+    - Test pod-to-pod and pod-to-service connectivity
+    3) Test pod-to-pod connectivity:
+    >kubectl exec -it <pod-name> -- ping <target-pod-ip>
+    4) Test pod-to-service connectivity:
+    >kubectl exec -it <pod-name> -- curl <service-name>:<port>  
+    5) Check network policies: 
+    >kubectl get networkpolicy -A
+    6) Describe network policy: 
+    >kubectl describe networkpolicy <policy-name> -n <namespace>
+    7) Check network policy YAML configuration:
+    >kubectl get networkpolicy <policy-name> -n <namespace> -o yaml
+    8) Check network policy labels and annotations:
+    >kubectl get networkpolicy <policy-name> -n <namespace> -o json
+    >kubectl get networkpolicy <policy-name> -n <namespace> -o jsonpath='{.metadata.labels}'
+    >kubectl get networkpolicy <policy-name> -n <namespace> -o jsonpath='{.metadata.annotations}'
+    9) Check network policy owner references:
+    >kubectl get networkpolicy <policy-name> -n <namespace> -o jsonpath='{.metadata.ownerReferences}'
+    10) Check network policy finalizers:
+    >kubectl get networkpolicy <policy-name> -n <namespace> -o jsonpath='{.metadata.finalizers}'
+    11) Check network policy generation:
+    >kubectl get networkpolicy <policy-name> -n <namespace> -o jsonpath='{.metadata.generation}'
+    12) Check network policy UID:
+    >kubectl get networkpolicy <policy-name> -n <namespace> -o jsonpath='{.metadata.uid}'
+    13) Check network policy resourceVersion:
+    >kubectl get networkpolicy <policy-name> -n <namespace> -o jsonpath='{.metadata.resourceVersion}'   
+    14) Check network policy creationTimestamp:
+    >kubectl get networkpolicy <policy-name> -n <namespace> -o jsonpath='{.metadata.creationTimestamp}'
+    15) Check network policy deletionTimestamp:
+    >kubectl get networkpolicy <policy-name> -n <namespace> -o jsonpath='{.metadata.deletionTimestamp}'
+    16) Check network policy deletionGracePeriodSeconds:
+    >kubectl get networkpolicy <policy-name> -n <namespace> -o jsonpath='{.metadata.deletionGracePeriodSeconds}'
+    17) Check network policy ingress rules:
+    >kubectl get networkpolicy <policy-name> -n <namespace> -o jsonpath='{.spec.ingress}'
+    18) Check network policy egress rules:
+    >kubectl get networkpolicy <policy-name> -n <namespace> -o jsonpath='{.spec.egress}'    
+    19) Check network policy pod selectors:
+    >kubectl get networkpolicy <policy-name> -n <namespace> -o jsonpath='{.spec.podSelector}'
+    20) Check network policy namespace selectors:
+    >kubectl get networkpolicy <policy-name> -n <namespace> -o jsonpath='{.spec.namespaceSelector}'
+    21) Check network policy policy types:
+    >kubectl get networkpolicy <policy-name> -n <namespace> -o jsonpath='{.spec.policyTypes}'
+    22) Check network policy applied to pods:
+    >kubectl get pods -n <namespace> -o jsonpath='{.items[?(@.metadata.labels["<label-key>"]=="<label-value>")].metadata.name}'
+    23) Check network policy applied to namespaces: 
+    >kubectl get namespaces -o jsonpath='{.items[?(@.metadata.labels["<label-key>"]=="<label-value>")].metadata.name}'
+    24) Check network policy applied to services:
+    >kubectl get svc -n <namespace> -o jsonpath='{.items[?(@.metadata.labels["<label-key>"]=="<label-value>")].metadata.name}'
+    25) Check network policy applied to ingress resources:
+    >kubectl get ingress -n <namespace> -o jsonpath='{.items[?(@.metadata.labels["<label-key>"]=="<label-value>")].metadata.name}'
+    26) Check network policy applied to configmaps:
+    >kubectl get configmap -n <namespace> -o jsonpath='{.items[?(@.metadata.labels["<label-key>"]=="<label-value>")].metadata.name}'
+    27) Check network policy applied to secrets:
+    >kubectl get secrets -n <namespace> -o jsonpath='{.items[?(@.metadata.labels["<label-key>"]=="<label-value>")].metadata.name}'
+    28) Check network policy applied to persistent volumes:
+    >kubectl get pv -o jsonpath='{.items[?(@.metadata.labels["<label-key>"]=="<label-value>")].metadata.name}'
+    29) Check network policy applied to persistent volume claims:
+    >kubectl get pvc -n <namespace> -o jsonpath='{.items[?(@.metadata.labels["<label-key>"]=="<label-value>")].metadata.name}'
+    30) Check network policy applied to custom resources:
+    >kubectl get <custom-resource> -n <namespace> -o jsonpath='{.items[?(@.metadata.labels["<label-key>"]=="<label-value>")].metadata.name}'
+    31) Check network policy applied to custom resource definitions (CRDs):
+    >kubectl get customresourcedefinitions -o jsonpath='{.items[?(@.metadata.labels["<label-key>"]=="<label-value>")].metadata.name}'
+    32) Check network policy applied to custom resource validation:
+    >kubectl get <custom-resource-validation> -n <namespace> -o jsonpath='{.items[?(@.metadata.labels["<label-key>"]=="<label-value>")].metadata.name}'
+    
+10. General Tips:
+     - Use `kubectl describe` and `kubectl logs` as first steps
+     - Check resource quotas and limits: 
+     >kubectl get resourcequota -A
+     - Review recent events: 
+     >kubectl get events -A --sort-by=.metadata.creationTimestamp   
+     - Use `kubectl top` for resource usage (requires metrics-server)
+     - For stuck resources, check finalizers and ownerReferences
+
+
+# Kubernetes Troubleshooting Guide
+This guide provides a comprehensive set of commands and checks to troubleshoot common issues in Kubernetes clusters, organized by resource type and level of abstraction.
+1. **Cluster Level:**
+    1) Check cluster status:
+    >kubectl cluster-info
+    2) Check nodes status:
+    >kubectl get nodes -o wide
+    3) Describe node:
+    >kubectl describe node <node-name>
+    4) Check node labels and taints:
+    >kubectl get nodes -L <label-key> -o jsonpath='{.items[*].metadata.labels.<label-key>}'
+    >kubectl get nodes -o jsonpath='{.items[*].spec.taints}'
+    5) Check node conditions:
+    >kubectl get nodes -o jsonpath='{.items[*].status.conditions}'
+    6) Check node resource usage:
+    >kubectl top nodes
+    7) Check cluster events:
+    >kubectl get events --sort-by=.metadata.creationTimestamp
+    8) Check cluster version:
+    >kubectl version --short
+    9) Check cluster configuration:
+    >kubectl config view
+    10) Check cluster role bindings:
+    >kubectl get clusterrolebindings
+    11) Check cluster roles:
+    >kubectl get clusterroles
+    12) Check API server logs (if accessible):
+    >journalctl -u kube-apiserver
+    13) Check controller manager logs (if accessible):
+    >journalctl -u kube-controller-manager
+    14) Check scheduler logs (if accessible):
+    >journalctl -u kube-scheduler
+    15) Check etcd status (if applicable):
+    >etcdctl endpoint health    
+    16) Check etcd logs (if applicable):
+    >journalctl -u etcd
+    17) Check cloud provider integration (if applicable):
+    >kubectl get configmap -n kube-system cloud-provider-config
+    18) Check network policies:
+    >kubectl get networkpolicy -A
+    19) Check CNI plugin status:
+    >kubectl get pods -n kube-system -l k8s-app=cni-plugin
+    20) Check CNI plugin logs:
+    >kubectl logs -n kube-system -l k8s-app=cni-plugin
+    21) Check cluster resource quotas:
+    >kubectl get resourcequota -A
+    22) Check cluster limit ranges:
+    >kubectl get limitrange -A
+    23) Check cluster storage classes:
+    >kubectl get storageclass
+    24) Check cluster persistent volumes:
+    >kubectl get pv -A
+    25) Check cluster persistent volume claims:
+    >kubectl get pvc -A
+    26) Check cluster custom resource definitions (CRDs):
+    >kubectl get customresourcedefinitions -A
+    27) Check cluster custom resources:
+    >kubectl get <custom-resource> -A
+    28) Check cluster custom resource validation:
+    >kubectl get <custom-resource-validation> -A
+    29) Check cluster custom resource conversion:
+    >kubectl get <custom-resource-conversion> -A
+
+
+**References**
+- Kubernetes Official Docs: https://kubernetes.io/docs/tasks/debug/
+- Kubernetes Troubleshooting Guide: https://kubernetes.io/docs/tasks/debug/debug-application/
+- Common Issues and Solutions: https://kubernetes.io/docs/tasks/debug/debug-cluster/
+- Community Forums: https://discuss.kubernetes.io/
