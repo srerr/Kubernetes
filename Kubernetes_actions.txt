@@ -1,0 +1,672 @@
+Using kubectl imparative commands and sysntax from biginners to advanced level.:
+===============================================================================
+    # Pod level:
+    -------------
+        1) Create a pod with a specific image:
+        > kubectl create pod my-pod --image=nginx -n my-namespace --restart=Never --port=80 --dry-run=client -o yaml | kubectl apply -f -    
+        2) Delete a pod:
+        > kubectl delete pod my-pod -n my-namespace  
+        3) Get pod details:
+        > kubectl get pod my-pod -n my-namespace -o wide
+        4) Describe a pod:
+        > kubectl describe pod my-pod -n my-namespace    
+        5) Scale a pod:
+        > kubectl scale pod my-pod --replicas=3 -n my-namespace  
+        6) Update a pod's image:
+        > kubectl set image pod/my-pod nginx=nginx:latest -n my-namespace
+        7) View logs of a pod:
+        > kubectl logs my-pod -n my-namespace    
+        8) Execute a command in a pod:
+        > kubectl exec -it my-pod -n my-namespace -- /bin/bash   
+        9) Port forward a pod:
+        > kubectl port-forward my-pod 8080:80 -n my-namespace
+        10) Get pod events:
+            > kubectl get events --field-selector involvedObject.name=my-pod -n my-namespace    
+        11) Attach to a pod:
+            > kubectl attach my-pod -n my-namespace -c nginx    
+        12) Copy files to/from a pod:
+            > kubectl cp my-namespace/my-pod:/path/in/pod /local/path       
+            > kubectl cp /local/path my-namespace/my-pod:/path/in/pod   
+        13) Get pod YAML:
+            > kubectl get pod my-pod -n my-namespace -o yaml
+        14) Restart a pod:
+            > kubectl delete pod my-pod -n my-namespace
+            > kubectl create pod my-pod --image=nginx -n my-namespace --restart=Never --port=80 --dry-run=client -o yaml | kubectl apply -f -
+        15) edit a pod:
+            > kubectl edit pod my-pod -n my-namespace
+        16) pod recent restarts:
+            > kubectl get pod my-pod -n my-namespace --sort-by='.status.containerStatuses[0].restartCount'
+        17) Get pod JSON:
+            > kubectl get pod my-pod -n my-namespace -o json
+        18) Get pod's resource requests and limits:
+            > kubectl get pod my-pod -n my-namespace -o jsonpath='{{.spec.containers[0].resources}}'
+        19) Get pod's environment variables:
+            > kubectl get pod my-pod -n my-namespace -o jsonpath='{.spec.containers[0].env}'
+        20) Get pod status:
+            > kubectl get pod my-pod -n my-namespace -o jsonpath='{{.status.phase}}'
+        21) Get pod IP:
+            > kubectl get pod my-pod -n my-namespace -o jsonpath='{{.status.podIP}}'
+        22) Get pod labels:
+            > kubectl get pod my-pod -n my-namespace --show-labels
+        23) Get pod annotations:
+            > kubectl get pod my-pod -n my-namespace -o jsonpath='{{.metadata.annotations}}'
+        24) Get pod resource usage:
+            > kubectl top pod my-pod -n my-namespace
+        25) Get pod's node:
+            > kubectl get pod my-pod -n my-namespace -o jsonpath='{{.spec.nodeName}}'
+        26) Get pod's owner:
+            > kubectl get pod my-pod -n my-namespace -o jsonpath='{{.metadata.ownerReferences[0].name}}'
+        27) Get pod's restart count:
+            > kubectl get pod my-pod -n my-namespace -o jsonpath='{{.status.containerStatuses[0].restartCount}}'
+        28) Get pod's readiness status:
+            > kubectl get pod my-pod -n my-namespace -o jsonpath='{{.status.conditions[?(@.type=="Ready")].status}}'
+        29) Get pod's termination grace period:
+            > kubectl get pod my-pod -n my-namespace -o jsonpath='{{.spec.terminationGracePeriodSeconds}}'
+        30) Get pod's creation timestamp:
+            > kubectl get pod my-pod -n my-namespace -o jsonpath='{{.metadata.creationTimestamp}}'
+        31) Get pod's node selector:
+            > kubectl get pod my-pod -n my-namespace -o jsonpath='{{.spec.nodeSelector}}'
+        32) Get pod's tolerations:
+            > kubectl get pod my-pod -n my-namespace -o jsonpath='{{.spec.tolerations}}'
+        33) Get pod's security context:
+            > kubectl get pod my-pod -n my-namespace -o jsonpath='{{.spec.securityContext}}'
+        34) Get pod's service account:
+            > kubectl get pod my-pod -n my-namespace -o jsonpath='{{.spec.serviceAccountName}}'
+        35) Get pod's image pull secrets:
+            > kubectl get pod my-pod -n my-namespace -o jsonpath='{{.spec.imagePullSecrets}}'
+        36) Get pod's DNS policy:
+            > kubectl get pod my-pod -n my-namespace -o jsonpath='{{.spec.dnsPolicy}}'  
+        37) Get pod's host network setting:
+            > kubectl get pod my-pod -n my-namespace -o jsonpath='{{.spec.hostNetwork}}'
+        38) Get pod's host PID setting:
+            > kubectl get pod my-pod -n my-namespace -o jsonpath='{{.spec.hostPID}}'    
+        39) Get pod's host IPC setting:
+            > kubectl get pod my-pod -n my-namespace -o jsonpath='{{.spec.hostIPC}}'
+        40) Get pod's affinity rules:
+            > kubectl get pod my-pod -n my-namespace -o jsonpath='{{.spec.affinity}}'
+    # ReplicaSet level:
+    -------------------
+        1) Create a ReplicaSet:
+        > kubectl create rs my-replicaset --image=nginx --replicas=3 -n my-namespace --dry-run=client -o yaml | kubectl apply -f -
+        2) Delete a ReplicaSet:
+        > kubectl delete rs my-replicaset -n my-namespace
+        3) Get ReplicaSet details:
+        > kubectl get rs my-replicaset -n my-namespace -o wide
+        4) Describe a ReplicaSet:
+        > kubectl describe rs my-replicaset -n my-namespace
+        5) Scale a ReplicaSet:
+        > kubectl scale rs my-replicaset --replicas=5 -n my-namespace
+        6) Update a ReplicaSet's image:
+        > kubectl set image rs/my-replicaset nginx=nginx:latest -n my-namespace
+        7) View logs of pods managed by a ReplicaSet:
+        > kubectl logs -l app=my-replicaset -n my-namespace    
+        8) Get ReplicaSet YAML:
+        > kubectl get rs my-replicaset -n my-namespace -o yaml
+        9) Restart a ReplicaSet:
+        > kubectl delete rs my-replicaset -n my-namespace
+        > kubectl create rs my-replicaset --image=nginx --replicas=3 -n my-namespace --dry-run=client -o yaml | kubectl apply -f -
+        10) Edit a ReplicaSet:
+        > kubectl edit rs my-replicaset -n my-namespace 
+        11) Get ReplicaSet JSON:
+        > kubectl get rs my-replicaset -n my-namespace -o json
+        12) Get ReplicaSet's resource requests and limits:
+        > kubectl get rs my-replicaset -n my-namespace -o jsonpath='{{.spec.template.spec.containers[0].resources}}'
+        13) Get ReplicaSet's environment variables:
+        > kubectl get rs my-replicaset -n my-namespace -o jsonpath='{{.spec.template.spec.containers[0].env}}'  
+        14) Get ReplicaSet status:
+        > kubectl get rs my-replicaset -n my-namespace -o jsonpath='{{.status.replicas}}'
+        15) Get ReplicaSet's pods:
+        > kubectl get pods -l app=my-replicaset -n my-namespace
+        16) Get ReplicaSet's labels:
+        > kubectl get rs my-replicaset -n my-namespace --show-labels
+        17) Get ReplicaSet's annotations:
+        > kubectl get rs my-replicaset -n my-namespace -o jsonpath='{{.metadata.annotations}}'
+        18) Get ReplicaSet's resource usage:
+        > kubectl top rs my-replicaset -n my-namespace  
+        19) Get ReplicaSet's node selector:
+        > kubectl get rs my-replicaset -n my-namespace -o jsonpath='{{.spec.template.spec.nodeSelector}}'
+        20) Get ReplicaSet's tolerations:
+        > kubectl get rs my-replicaset -n my-namespace -o jsonpath='{{.spec.template.spec.tolerations}}'    
+        21) Get ReplicaSet's security context:
+        > kubectl get rs my-replicaset -n my-namespace -o jsonpath='{{.spec.template.spec.securityContext}}'
+        22) Get ReplicaSet's service account:
+        > kubectl get rs my-replicaset -n my-namespace -o jsonpath='{{.spec.template.spec.serviceAccountName}}' 
+        23) Get ReplicaSet's image pull secrets:
+        > kubectl get rs my-replicaset -n my-namespace -o jsonpath='{{.spec.template.spec.imagePullSecrets}}'
+        24) Get ReplicaSet's DNS policy:
+        > kubectl get rs my-replicaset -n my-namespace -o jsonpath='{{.spec.template.spec.dnsPolicy}}'  
+        25) Get ReplicaSet's host network setting:
+        > kubectl get rs my-replicaset -n my-namespace -o jsonpath='{{.spec.template.spec.hostNetwork}}'
+        26) Get ReplicaSet's host PID setting:
+        > kubectl get rs my-replicaset -n my-namespace -o jsonpath='{{.spec.template.spec.hostPID}}'    
+        27) Get ReplicaSet's host IPC setting:
+        > kubectl get rs my-replicaset -n my-namespace -o jsonpath='{{.spec.template.spec.hostIPC}}'
+        28) Get ReplicaSet's affinity rules:
+        > kubectl get rs my-replicaset -n my-namespace -o jsonpath='{{.spec.template.spec.affinity}}'   
+        29) Get ReplicaSet's creation timestamp:
+        > kubectl get rs my-replicaset -n my-namespace -o jsonpath='{{.metadata.creationTimestamp}}'
+        30) Get ReplicaSet's owner:
+        > kubectl get rs my-replicaset -n my-namespace -o jsonpath='{{.metadata.ownerReferences}}'  
+    # Deployment level:
+    -------------------
+        1) Create a Deployment:
+        > kubectl create deployment my-deployment --image=nginx -n my-namespace --replicas=3 --dry-run=client -o yaml | kubectl apply -f -
+        2) Delete a Deployment:
+        > kubectl delete deployment my-deployment -n my-namespace
+        3) Get Deployment details:
+        > kubectl get deployment my-deployment -n my-namespace -o wide
+        4) Describe a Deployment:
+        > kubectl describe deployment my-deployment -n my-namespace
+        5) Scale a Deployment:
+        > kubectl scale deployment my-deployment --replicas=5 -n my-namespace
+        6) Update a Deployment's image:
+        > kubectl set image deployment/my-deployment nginx=nginx:latest -n my-namespace
+        7) View logs of pods managed by a Deployment:
+        > kubectl logs -l app=my-deployment -n my-namespace    
+        8) Get Deployment YAML:
+        > kubectl get deployment my-deployment -n my-namespace -o yaml
+        9) Restart a Deployment:
+        > kubectl rollout restart deployment/my-deployment -n my-namespace
+        10) Edit a Deployment:
+        > kubectl edit deployment my-deployment -n my-namespace 
+        11) Get Deployment JSON:
+        > kubectl get deployment my-deployment -n my-namespace -o json
+        12) Get Deployment's resource requests and limits:
+        > kubectl get deployment my-deployment -n my-namespace -o jsonpath='{{.spec.template.spec.containers[0].resources}}'
+        13) Get Deployment's environment variables:
+        > kubectl get deployment my-deployment -n my-namespace -o jsonpath='{{.spec.template.spec.containers[0].env}}'  
+        14) Get Deployment status:
+        > kubectl get deployment my-deployment -n my-namespace -o jsonpath='{{.status.replicas}}'
+        15) Get Deployment's pods:
+        > kubectl get pods -l app=my-deployment -n my-namespace -o jsonpath='{.items[*].metadata.name}' 
+        16) Get Deployment's labels:
+        > kubectl get deployment my-deployment -n my-namespace --show-labels    
+        17) Get Deployment's annotations:
+        > kubectl get deployment my-deployment -n my-namespace -o jsonpath='{{.metadata.annotations}}'
+        18) Get Deployment's resource usage:
+        > kubectl top deployment my-deployment -n my-namespace
+        19) Get Deployment's node selector:
+        > kubectl get deployment my-deployment -n my-namespace -o jsonpath='{{.spec.template.spec.nodeSelector}}'
+        20) Get Deployment's tolerations:
+        > kubectl get deployment my-deployment -n my-namespace -o jsonpath='{{.spec.template.spec.tolerations}}'        
+        21) Get Deployment's security context:
+        > kubectl get deployment my-deployment -n my-namespace -o jsonpath='{{.spec.template.spec.securityContext}}'
+        22) Get Deployment's service account:
+        > kubectl get deployment my-deployment -n my-namespace -o jsonpath='{{.spec.template.spec.serviceAccountName}}' 
+        23) Get Deployment's image pull secrets:
+        > kubectl get deployment my-deployment -n my-namespace -o jsonpath='{{.spec.template.spec.imagePullSecrets}}'
+        24) Get Deployment's DNS policy:
+        > kubectl get deployment my-deployment -n my-namespace -o jsonpath='{{.spec.template.spec.dnsPolicy}}'  
+        25) Get Deployment's host network setting:
+        > kubectl get deployment my-deployment -n my-namespace -o jsonpath='{{.spec.template.spec.hostNetwork}}'
+        26) Get Deployment's host PID setting:
+        > kubectl get deployment my-deployment -n my-namespace -o jsonpath='{{.spec.template.spec.hostPID}}'    
+        27) Get Deployment's host IPC setting:
+        > kubectl get deployment my-deployment -n my-namespace -o jsonpath='{{.spec.template.spec.hostIPC}}'
+        28) Get Deployment's affinity rules:
+        > kubectl get deployment my-deployment -n my-namespace -o jsonpath='{{.spec.template.spec.affinity}}'
+        29) Get Deployment's creation timestamp:
+        > kubectl get deployment my-deployment -n my-namespace -o jsonpath='{{.metadata.creationTimestamp}}'
+        30) Get Deployment's owner:
+        > kubectl get deployment my-deployment -n my-namespace -o jsonpath='{{.metadata.ownerReferences}}'  
+    # Service level:
+    ------------------- 
+        1) Create a Service:
+        > kubectl create service clusterip my-service --tcp=80:80 -n my-namespace --dry-run=client -o yaml | kubectl apply -f -
+        2) Delete a Service:
+        > kubectl delete service my-service -n my-namespace
+        3) Get Service details:
+        > kubectl get service my-service -n my-namespace -o wide
+        4) Describe a Service:
+        > kubectl describe service my-service -n my-namespace
+        5) Update a Service's selector:
+        > kubectl patch service my-service -n my-namespace -p '{"spec":{"selector":{"app":"new-app"}}}'
+        6) View logs of pods behind a Service:
+        > kubectl logs -l app=my-service -n my-namespace    
+        7) Get Service YAML:
+        > kubectl get service my-service -n my-namespace -o yaml
+        8) Edit a Service:
+        > kubectl edit service my-service -n my-namespace 
+        9) Get Service JSON:
+        > kubectl get service my-service -n my-namespace -o json
+        10) Get Service's resource usage:
+        > kubectl top service my-service -n my-namespace    
+        11) Get Service's endpoints:
+        > kubectl get endpoints my-service -n my-namespace  
+        12) Get Service's labels:
+        > kubectl get service my-service -n my-namespace --show-labels  
+        13) Get Service's annotations:
+        > kubectl get service my-service -n my-namespace -o jsonpath='{{.metadata.annotations}}'
+        14) Get Service's type:
+        > kubectl get service my-service -n my-namespace -o jsonpath='{{.spec.type}}'   
+        15) Get Service's cluster IP:
+        > kubectl get service my-service -n my-namespace -o jsonpath='{{.spec.clusterIP}}'
+        16) Get Service's external IP:
+        > kubectl get service my-service -n my-namespace -o jsonpath='{{.spec.externalIPs}}'    
+        17) Get Service's ports:
+        > kubectl get service my-service -n my-namespace -o jsonpath='{{.spec.ports}}'
+        18) Get Service's session affinity:
+        > kubectl get service my-service -n my-namespace -o jsonpath='{{.spec.sessionAffinity}}'    
+        19) Get Service's load balancer IP:
+        > kubectl get service my-service -n my-namespace -o jsonpath='{{.spec.loadBalancerIP}}'
+        20) Get Service's health check node port:
+        > kubectl get service my-service -n my-namespace -o jsonpath='{{.spec.healthCheckNodePort}}'
+        21) Get Service's topology keys:
+        > kubectl get service my-service -n my-namespace -o jsonpath='{{.spec.topologyKeys}}'
+        22) Get Service's publish not ready addresses:
+        > kubectl get service my-service -n my-namespace -o jsonpath='{{.spec.publishNotReadyAddresses}}'
+        23) Get Service's creation timestamp:
+        > kubectl get service my-service -n my-namespace -o jsonpath='{{.metadata.creationTimestamp}}'
+        24) Get Service's owner:
+        > kubectl get service my-service -n my-namespace -o jsonpath='{{.metadata.ownerReferences}}'    
+    # ConfigMap level:
+    -------------------
+        1) Create a ConfigMap:
+        > kubectl create configmap my-config --from-literal=key1=value1 --from-literal=key2=value2 -n my-namespace --dry-run=client -o yaml | kubectl apply -f -
+        2) Delete a ConfigMap:
+        > kubectl delete configmap my-config -n my-namespace
+        3) Get ConfigMap details:
+        > kubectl get configmap my-config -n my-namespace -o yaml
+        4) Describe a ConfigMap:
+        > kubectl describe configmap my-config -n my-namespace
+        5) Update a ConfigMap:
+        > kubectl create configmap my-config --from-literal=key1=newvalue1 -n my-namespace --dry-run=client -o yaml | kubectl apply -f -
+        6) View ConfigMap data:
+        > kubectl get configmap my-config -n my-namespace -o jsonpath='{.data}'
+        7) Edit a ConfigMap:
+        > kubectl edit configmap my-config -n my-namespace
+        8) Get ConfigMap JSON:
+        > kubectl get configmap my-config -n my-namespace -o json
+        9) Get ConfigMap's labels:
+        > kubectl get configmap my-config -n my-namespace --show-labels
+        10) Get ConfigMap's annotations:
+        > kubectl get configmap my-config -n my-namespace -o jsonpath='{{.metadata.annotations}}'
+        11) Get ConfigMap's creation timestamp:
+        > kubectl get configmap my-config -n my-namespace -o jsonpath='{{.metadata.creationTimestamp}}'
+        12) Get ConfigMap's owner:
+        > kubectl get configmap my-config -n my-namespace -o jsonpath='{{.metadata.ownerReferences}}'   
+        13) Get ConfigMap's namespace:
+        > kubectl get configmap my-config -n my-namespace -o jsonpath='{{.metadata.namespace}}'
+        14) Get ConfigMap's resource version:
+        > kubectl get configmap my-config -n my-namespace -o jsonpath='{{.metadata.resourceVersion}}'   
+        15) Get ConfigMap's UID:
+        > kubectl get configmap my-config -n my-namespace -o jsonpath='{{.metadata.uid}}'
+        16) Get ConfigMap's data keys:
+        > kubectl get configmap my-config -n my-namespace -o jsonpath='{.data.*}'   
+        17) Get ConfigMap's data values:
+        > kubectl get configmap my-config -n my-namespace -o jsonpath='{.data.*}'
+        18) Get ConfigMap's binary data:
+        > kubectl get configmap my-config -n my-namespace -o jsonpath='{.binaryData.*}' 
+        19) Get ConfigMap's binary data keys:
+        > kubectl get configmap my-config -n my-namespace -o jsonpath='{.binaryData.*}'
+        20) Get ConfigMap's binary data values:
+        > kubectl get configmap my-config -n my-namespace -o jsonpath='{.binaryData.*}' 
+        21) Get ConfigMap's data size:
+        > kubectl get configmap my-config -n my-namespace -o jsonpath='{{.data | length}}'
+        22) Get ConfigMap's binary data size:
+        > kubectl get configmap my-config -n my-namespace -o jsonpath='{{.binaryData | length}}'    
+        23) Get ConfigMap's data keys count:
+        > kubectl get configmap my-config -n my-namespace -o jsonpath='{{.data | keys | length}}'
+        24) Get ConfigMap's binary data keys count:
+        > kubectl get configmap my-config -n my-namespace -o jsonpath='{{.binaryData | keys | length}}' 
+        25) Get ConfigMap's data values count:
+        > kubectl get configmap my-config -n my-namespace -o jsonpath='{{.data | values | length}}' 
+        26) Get ConfigMap's binary data values count:
+        > kubectl get configmap my-config -n my-namespace -o jsonpath='{{.binaryData | values | length}}'
+        27) Get ConfigMap's data keys and values:
+        > kubectl get configmap my-config -n my-namespace -o jsonpath='{.data}'
+    # Secret level:
+    -------------------
+        1) Create a Secret:
+        > kubectl create secret generic my-secret --from-literal=username=admin --from-literal=password=secret -n my-namespace --dry-run=client -o yaml | kubectl apply -f -
+        2) Delete a Secret:
+        > kubectl delete secret my-secret -n my-namespace
+        3) Get Secret details:
+        > kubectl get secret my-secret -n my-namespace -o yaml
+        4) Describe a Secret:
+        > kubectl describe secret my-secret -n my-namespace
+        5) Update a Secret:
+        > kubectl create secret generic my-secret --from-literal=username=newadmin -n my-namespace --dry-run=client -o yaml | kubectl apply -f -
+        6) View Secret data:
+        > kubectl get secret my-secret -n my-namespace -o jsonpath='{.data}'
+        7) Edit a Secret:
+        > kubectl edit secret my-secret -n my-namespace
+        8) Get Secret JSON:
+        > kubectl get secret my-secret -n my-namespace -o json
+        9) Get Secret's labels:
+        > kubectl get secret my-secret -n my-namespace --show-labels
+        10) Get Secret's annotations:
+        > kubectl get secret my-secret -n my-namespace -o jsonpath='{{.metadata.annotations}}'
+        11) Get Secret's creation timestamp:
+        > kubectl get secret my-secret -n my-namespace -o jsonpath='{{.metadata.creationTimestamp}}'    
+        12) Get Secret's owner:
+        > kubectl get secret my-secret -n my-namespace -o jsonpath='{{.metadata.ownerReferences}}'
+        13) Get Secret's namespace:
+        > kubectl get secret my-secret -n my-namespace -o jsonpath='{{.metadata.namespace}}'    
+        14) Get Secret's resource version:
+        > kubectl get secret my-secret -n my-namespace -o jsonpath='{{.metadata.resourceVersion}}'
+        15) Get Secret's UID:   
+        > kubectl get secret my-secret -n my-namespace -o jsonpath='{{.metadata.uid}}'
+        16) Get Secret's data keys:
+        > kubectl get secret my-secret -n my-namespace -o jsonpath='{.data.*}'          
+        17) Get Secret's data values:
+        > kubectl get secret my-secret -n my-namespace -o jsonpath='{.data.*}'
+        18) Get Secret's type:
+        > kubectl get secret my-secret -n my-namespace -o jsonpath='{.type}'        
+        19) Get Secret's data size:
+        > kubectl get secret my-secret -n my-namespace -o jsonpath='{{.data | length}}'
+        20) Get Secret's data keys count:
+        > kubectl get secret my-secret -n my-namespace -o jsonpath='{{.data | keys | length}}'  
+        21) Get Secret's data values count:
+        > kubectl get secret my-secret -n my-namespace -o jsonpath='{{.data | values | length}}'
+        22) Get Secret's data keys and values:  
+        > kubectl get secret my-secret -n my-namespace -o jsonpath='{.data}'
+        23) Get Secret's binary data:
+        > kubectl get secret my-secret -n my-namespace -o jsonpath='{.data | select(.type=="kubernetes.io/dockerconfigjson")}'  
+    # Namespace level:
+    -------------------
+        1) Create a Namespace:
+        > kubectl create namespace my-namespace --dry-run=client -o yaml | kubectl apply -f -
+        2) Delete a Namespace:
+        > kubectl delete namespace my-namespace
+        3) Get Namespace details:
+        > kubectl get namespace my-namespace -o yaml
+        4) Describe a Namespace:
+        > kubectl describe namespace my-namespace
+        5) Update a Namespace's labels:
+        > kubectl label namespace my-namespace new-label=value --overwrite
+        6) View all resources in a Namespace:
+        > kubectl get all -n my-namespace
+        7) Edit a Namespace:
+        > kubectl edit namespace my-namespace
+        8) Get Namespace JSON:
+        > kubectl get namespace my-namespace -o json
+        9) Get Namespace's labels:
+        > kubectl get namespace my-namespace --show-labels  
+        10) Get Namespace's annotations:
+        > kubectl get namespace my-namespace -o jsonpath='{{.metadata.annotations}}'
+        11) Get Namespace's creation timestamp:
+        > kubectl get namespace my-namespace -o jsonpath='{{.metadata.creationTimestamp}}'  
+        12) Get Namespace's status:
+        > kubectl get namespace my-namespace -o jsonpath='{{.status.phase}}'
+        13) Get Namespace's resource version:
+        > kubectl get namespace my-namespace -o jsonpath='{{.metadata.resourceVersion}}'            
+        14) Get Namespace's UID:
+        > kubectl get namespace my-namespace -o jsonpath='{{.metadata.uid}}'
+        15) Get Namespace's owner:
+        > kubectl get namespace my-namespace -o jsonpath='{{.metadata.ownerReferences}}'    
+        16) Get Namespace's finalizers:
+        > kubectl get namespace my-namespace -o jsonpath='{{.spec.finalizers}}'
+        17) Get Namespace's labels and annotations:
+        > kubectl get namespace my-namespace -o jsonpath='{.metadata.labels} {.metadata.annotations}'   
+        18) Get Namespace's resource usage:
+        > kubectl top namespace my-namespace
+        19) Get Namespace's resource quotas:
+        > kubectl get resourcequota -n my-namespace 
+        20) Get Namespace's limit ranges:
+        > kubectl get limitrange -n my-namespace
+        21) Get Namespace's network policies:
+        > kubectl get networkpolicy -n my-namespace
+    # Node level:
+    -------------------
+        1) Get Node details:
+        > kubectl get nodes -o wide
+        2) Describe a Node:
+        > kubectl describe node my-node
+        3) Get Node labels:
+        > kubectl get node my-node --show-labels
+        4) Get Node annotations:
+        > kubectl get node my-node -o jsonpath='{.metadata.annotations}'
+        5) Get Node status:
+        > kubectl get node my-node -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}'
+        6) Get Node IP addresses:
+        > kubectl get node my-node -o jsonpath='{.status.addresses[*].address}'
+        7) Get Node resource usage:
+        > kubectl top node my-node
+        8) Get Node's allocated resources:
+        > kubectl describe node my-node | grep "Allocated resources"
+        9) Get Node's capacity:
+        > kubectl get node my-node -o jsonpath='{.status.capacity}' 
+        10) Get Node's allocatable resources:
+        > kubectl get node my-node -o jsonpath='{.status.allocatable}'  
+        11) Get Node's taints:
+        > kubectl get node my-node -o jsonpath='{.spec.taints}' 
+        12) Get Node's conditions:
+        > kubectl get node my-node -o jsonpath='{.status.conditions}'   
+        13) Get Node's pod CIDR:
+        > kubectl get node my-node -o jsonpath='{.spec.podCIDR}'
+        14) Get Node's kubelet version:
+        > kubectl get node my-node -o jsonpath='{.status.nodeInfo.kubeletVersion}'  
+        15) Get Node's OS image:
+        > kubectl get node my-node -o jsonpath='{.status.nodeInfo.osImage}'
+        16) Get Node's kernel version:
+        > kubectl get node my-node -o jsonpath='{.status.nodeInfo.kernelVersion}'   
+        17) Get Node's architecture:
+        > kubectl get node my-node -o jsonpath='{.status.nodeInfo.architecture}'
+        18) Get Node's container runtime:
+        > kubectl get node my-node -o jsonpath='{.status.nodeInfo.containerRuntimeVersion}' 
+        19) Get Node's labels:
+        > kubectl get node my-node -o jsonpath='{.metadata.labels}' 
+        20) Get Node's annotations:
+        > kubectl get node my-node -o jsonpath='{.metadata.annotations}'    
+        21) Get Node's creation timestamp:
+        > kubectl get node my-node -o jsonpath='{.metadata.creationTimestamp}'  
+        22) Get Node's resource version:
+        > kubectl get node my-node -o jsonpath='{.metadata.resourceVersion}'    
+        23) Get Node's UID:
+        > kubectl get node my-node -o jsonpath='{.metadata.uid}'    
+        24) Get Node's owner:
+        > kubectl get node my-node -o jsonpath='{.metadata.ownerReferences}'    
+        25) Get Node's internal IP:
+        > kubectl get node my-node -o jsonpath='{.status.addresses[?(@.type=="InternalIP")].address}'
+        26) Get Node's external IP:
+        > kubectl get node my-node -o jsonpath='{.status.addresses[?(@.type=="ExternalIP")].address}'   
+        27) Get Node's hostname:
+        > kubectl get node my-node -o jsonpath='{.status.addresses[?(@.type=="Hostname")].address}'
+        28) Get Node's pod CIDRs:
+        > kubectl get node my-node -o jsonpath='{.spec.podCIDR}'    
+        29) Get Node's pod CIDR:
+        > kubectl get node my-node -o jsonpath='{.spec.podCIDRs}'   
+        30) Get Node's kube-proxy version:
+        > kubectl get node my-node -o jsonpath='{.status.nodeInfo.kubeProxyVersion}'
+        31) Get Node's kubelet version:
+        > kubectl get node my-node -o jsonpath='{.status.nodeInfo.kubeletVersion}'  
+        32) Get Node's kube-controller-manager version:
+        > kubectl get node my-node -o jsonpath='{.status.nodeInfo.kubeControllerManagerVersion}'
+        33) Get Node's kube-scheduler version:
+        > kubectl get node my-node -o jsonpath='{.status.nodeInfo.kubeSchedulerVersion}'    
+        34) Get Node's kube-apiserver version:
+        > kubectl get node my-node -o jsonpath='{.status.nodeInfo.kubeApiserverVersion}'
+        35) Get Node's kubelet root directory:
+        > kubectl get node my-node -o jsonpath='{.status.nodeInfo.kubeletRootDir}'  
+        36) Get Node's kubelet configuration:
+        > kubectl get node my-node -o jsonpath='{.status.nodeInfo.kubeletConfig}'
+        37) Get Node's kubelet cgroup driver:
+        > kubectl get node my-node -o jsonpath='{.status.nodeInfo.kubeletCgroupDriver}' 
+        38) Get Node's kubelet cgroup root:
+        > kubectl get node my-node -o jsonpath='{.status.nodeInfo.kubeletCgroupRoot}'
+        39) Get Node's kubelet eviction hard thresholds:
+        > kubectl get node my-node -o jsonpath='{.status.nodeInfo.kubeletEvictionHard}' 
+        40) Get Node's kubelet eviction soft thresholds:
+        > kubectl get node my-node -o jsonpath='{.status.nodeInfo.kubeletEvictionSoft}'
+        41) Get Node's kubelet eviction max thresholds:
+        > kubectl get node my-node -o jsonpath='{.status.nodeInfo.kubeletEvictionMax}'  
+        42) Get Node's kubelet eviction grace periods:
+        > kubectl get node my-node -o jsonpath='{.status.nodeInfo.kubeletEvictionGracePeriods}'
+        43) Get Node's kubelet eviction thresholds:
+        > kubectl get node my-node -o jsonpath='{.status.nodeInfo.kubeletEvictionThresholds}'   
+        44) Get Node's kubelet eviction thresholds:
+        > kubectl get node my-node -o jsonpath='{.status.nodeInfo.kubeletEvictionThresholds}'
+        45) Get Node's kubelet eviction thresholds:
+        > kubectl get node my-node -o jsonpath='{.status.nodeInfo.kubeletEvictionThresholds}'   
+    # Cluster level:
+    -------------------
+        1) Get Cluster information:
+        > kubectl cluster-info
+        2) Get Cluster nodes:
+        > kubectl get nodes -o wide
+        3) Get Cluster namespaces:
+        > kubectl get namespaces
+        4) Get Cluster resource quotas:
+        > kubectl get resourcequota --all-namespaces
+        5) Get Cluster limit ranges:
+        > kubectl get limitrange --all-namespaces
+        6) Get Cluster network policies:
+        > kubectl get networkpolicy --all-namespaces
+        7) Get Cluster storage classes:
+        > kubectl get storageclass
+        8) Get Cluster persistent volumes:
+        > kubectl get pv
+        9) Get Cluster persistent volume claims:
+        > kubectl get pvc --all-namespaces
+        10) Get Cluster config maps:
+        > kubectl get configmap --all-namespaces
+        11) Get Cluster secrets:
+        > kubectl get secret --all-namespaces
+        12) Get Cluster deployments:
+        > kubectl get deployments --all-namespaces
+        13) Get Cluster replica sets:
+        > kubectl get rs --all-namespaces
+        14) Get Cluster pods:
+        > kubectl get pods --all-namespaces 
+        15) Get Cluster services:
+        > kubectl get services --all-namespaces 
+        16) Get Cluster ingress resources:
+        > kubectl get ingress --all-namespaces  
+        17) Get Cluster events:
+        > kubectl get events --all-namespaces   
+        18) Get Cluster API resources:
+        > kubectl api-resources 
+        19) Get Cluster API versions:
+        > kubectl api-versions  
+        20) Get Cluster component statuses:
+        > kubectl get componentstatuses
+        21) Get Cluster roles:
+        > kubectl get roles --all-namespaces    
+        22) Get Cluster role bindings:
+        > kubectl get rolebindings --all-namespaces 
+        23) Get Cluster cluster roles:
+        > kubectl get clusterroles  
+        24) Get Cluster cluster role bindings:
+        > kubectl get clusterrolebindings   
+        25) Get Cluster horizontal pod autoscalers:
+        > kubectl get hpa --all-namespaces  
+        26) Get Cluster vertical pod autoscalers:
+        > kubectl get vpa --all-namespaces  
+        27) Get Cluster custom resource definitions:
+        > kubectl get crd   
+        28) Get Cluster custom resources:
+        > kubectl get <custom-resource> --all-namespaces    
+        29) Get Cluster API server logs:
+        > kubectl logs -n kube-system kube-apiserver-my-node    
+        30) Get Cluster controller manager logs:
+        > kubectl logs -n kube-system kube-controller-manager-my-node   
+        31) Get Cluster scheduler logs:
+        > kubectl logs -n kube-system kube-scheduler-my-node    
+        32) Get Cluster etcd logs:
+        > kubectl logs -n kube-system etcd-my-node  
+        33) Get Cluster kube-proxy logs:
+        > kubectl logs -n kube-system kube-proxy-my-node    
+        34) Get Cluster kubelet logs:
+        > kubectl logs -n kube-system kubelet-my-node   
+        35) Get Cluster coredns logs:
+        > kubectl logs -n kube-system coredns-<pod-name>    
+        36) Get Cluster metrics server logs:
+        > kubectl logs -n kube-system metrics-server-<pod-name> 
+        37) Get Cluster ingress controller logs:
+        > kubectl logs -n kube-system nginx-ingress-controller-<pod-name>   
+        38) Get Cluster storage provisioner logs:
+        > kubectl logs -n kube-system csi-provisioner-<pod-name>    
+        39) Get Cluster storage attacher logs:
+        > kubectl logs -n kube-system csi-attacher-<pod-name>   
+        40) Get Cluster storage snapshotter logs:
+        > kubectl logs -n kube-system csi-snapshotter-<pod-name>    
+        41) Get Cluster storage resizer logs:
+        > kubectl logs -n kube-system csi-resizer-<pod-name>    
+        42) Get Cluster storage lister logs:
+        > kubectl logs -n kube-system csi-lister-<pod-name> 
+        43) Get Cluster storage provisioner logs:
+        > kubectl logs -n kube-system csi-provisioner-<pod-name>
+    # ingress level:
+    -------------------
+        1) Get Cluster ingress resources:
+        > kubectl get ingress --all-namespaces
+        2) Get Cluster ingress controller logs:
+        > kubectl logs -n kube-system nginx-ingress-controller-<pod-name>
+        3) Describe an Ingress:
+        > kubectl describe ingress my-ingress -n my-namespace
+        4) Get Ingress details:
+        > kubectl get ingress my-ingress -n my-namespace -o yaml
+        5) Create an Ingress:
+        > kubectl create ingress my-ingress --rule=example.com,/path=service:<service-name> -n my-namespace --dry-run=client -o yaml | kubectl apply -f -
+        6) Delete an Ingress:
+        > kubectl delete ingress my-ingress -n my-namespace 
+        7) Update an Ingress:
+        > kubectl patch ingress my-ingress -n my-namespace -p '{"spec":{"rules":[{"host":"example.com","http":{"paths":[{"path":"/newpath","backend":{"serviceName":"new-service","servicePort":80}}]}}]}}'
+        8) Edit an Ingress:
+        > kubectl edit ingress my-ingress -n my-namespace   
+        9) Get Ingress JSON:
+        > kubectl get ingress my-ingress -n my-namespace -o json    
+        10) Get Ingress's rules:
+        > kubectl get ingress my-ingress -n my-namespace -o jsonpath='{{.spec.rules}}'
+        11) Get Ingress's backend services:
+        > kubectl get ingress my-ingress -n my-namespace -o jsonpath='{{.spec.rules[*].http.paths[*].backend.serviceName}}' 
+        12) Get Ingress's annotations:
+        > kubectl get ingress my-ingress -n my-namespace -o jsonpath='{{.metadata.annotations}}'
+        13) Get Ingress's labels:
+        > kubectl get ingress my-ingress -n my-namespace -o jsonpath='{{.metadata.labels}}' 
+        14) Get Ingress's creation timestamp:
+        > kubectl get ingress my-ingress -n my-namespace -o jsonpath='{{.metadata.creationTimestamp}}'
+        15) Get Ingress's owner:
+        > kubectl get ingress my-ingress -n my-namespace -o jsonpath='{{.metadata.ownerReferences}}'    
+        16) Get Ingress's resource version:
+        > kubectl get ingress my-ingress -n my-namespace -o jsonpath='{{.metadata.resourceVersion}}'
+        17) Get Ingress's UID:
+        > kubectl get ingress my-ingress -n my-namespace -o jsonpath='{{.metadata.uid}}'    
+        18) Get Ingress's status:
+        > kubectl get ingress my-ingress -n my-namespace -o jsonpath='{{.status}}'
+        19) Get Ingress's address:
+        > kubectl get ingress my-ingress -n my-namespace -o jsonpath='{{.status.loadBalancer.ingress[*].ip}}'
+        20) Get Ingress's port:
+        > kubectl get ingress my-ingress -n my-namespace -o jsonpath='{{.spec.ports[*].port}}'  
+        21) Get Ingress's TLS configuration:
+        > kubectl get ingress my-ingress -n my-namespace -o jsonpath='{{.spec.tls}}'
+        22) Get Ingress's default backend:
+        > kubectl get ingress my-ingress -n my-namespace -o jsonpath='{{.spec.defaultBackend}}' 
+        23) Get Ingress's rules and paths:
+        > kubectl get ingress my-ingress -n my-namespace -o jsonpath='{{.spec.rules[*].http.paths[*].path}}'
+        24) Get Ingress's hostnames:
+        > kubectl get ingress my-ingress -n my-namespace -o jsonpath='{{.spec.rules[*].host}}'
+        25) Get Ingress's backend service ports:
+        > kubectl get ingress my-ingress -n my-namespace -o jsonpath='{{.spec.rules[*].http.paths[*].backend.servicePort}}'
+        26) Get Ingress's backend service names:
+        > kubectl get ingress my-ingress -n my-namespace -o jsonpath='{{.spec.rules[*].http.paths[*].backend.serviceName}}'
+        27) Get Ingress's backend service namespace:
+        > kubectl get ingress my-ingress -n my-namespace -o jsonpath='{{.metadata.namespace}}'
+        28) Get Ingress's backend service type:
+        > kubectl get ingress my-ingress -n my-namespace -o jsonpath='{{.spec.rules[*].http.paths[*].backend.servicePort}}'
+        29) Get Ingress's backend service protocol:
+        > kubectl get ingress my-ingress -n my-namespace -o jsonpath='{{.spec.rules[*].http.paths[*].backend.servicePort}}'
+        30) Get Ingress's backend service health check:
+        > kubectl get ingress my-ingress -n my-namespace -o jsonpath='{{.spec.rules[*].http.paths[*].backend.healthCheck}}'
+        31) Get Ingress's backend service readiness probe:
+        > kubectl get ingress my-ingress -n my-namespace -o jsonpath='{{.spec.rules[*].http.paths[*].backend.readinessProbe}}'
+        32) Get Ingress's backend service liveness probe:
+        > kubectl get ingress my-ingress -n my-namespace -o jsonpath='{{.spec.rules[*].http.paths[*].backend.livenessProbe}}'
+        33) Get Ingress's backend service resource limits:
+        > kubectl get ingress my-ingress -n my-namespace -o jsonpath='{{.spec.rules[*].http.paths[*].backend.resources.limits}}'
+        34) Get Ingress's backend service resource requests:
+        > kubectl get ingress my-ingress -n my-namespace -o jsonpath='{{.spec.rules[*].http.paths[*].backend.resources.requests}}'
+        35) Get Ingress's backend service environment variables:
+        > kubectl get ingress my-ingress -n my-namespace -o jsonpath='{{.spec.rules[*].http.paths[*].backend.env}}' 
+        36) Get Ingress's backend service volume mounts:
+        > kubectl get ingress my-ingress -n my-namespace -o jsonpath='{{.spec.rules[*].http.paths[*].backend.volumeMounts}}'
+        37) Get Ingress's backend service volumes:
+        > kubectl get ingress my-ingress -n my-namespace -o jsonpath='{{.spec.rules[*].http.paths[*].backend.volumes}}' 
+        38) Get Ingress's backend service security context:
+        > kubectl get ingress my-ingress -n my-namespace -o jsonpath='{{.spec.rules[*].http.paths[*].backend.securityContext}}'
+        39) Get Ingress's backend service node selector:
+        > kubectl get ingress my-ingress -n my-namespace -o jsonpath='{{.spec.rules[*].http.paths[*].backend.nodeSelector}}'
+        40) Get Ingress's backend service tolerations:
+        > kubectl get ingress my-ingress -n my-namespace -o jsonpath='{{.spec.rules[*].http.paths[*].backend.tolerations}}'
+    
