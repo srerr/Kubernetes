@@ -669,4 +669,57 @@ Using kubectl imparative commands and sysntax from biginners to advanced level.:
         > kubectl get ingress my-ingress -n my-namespace -o jsonpath='{{.spec.rules[*].http.paths[*].backend.nodeSelector}}'
         40) Get Ingress's backend service tolerations:
         > kubectl get ingress my-ingress -n my-namespace -o jsonpath='{{.spec.rules[*].http.paths[*].backend.tolerations}}'
-    
+    # HELM:
+    -------------------
+        1) Install a Helm chart:
+        > helm install my-release my-chart -n my-namespace
+        2) Create default values file for Helm chart:
+        > helm show values my-chart > values.yaml
+        3) Install a helm chart with values:
+        > helm install my-release my-chart -n my-namespace -f values.yaml
+        4) Upgrade a Helm release:
+        > helm upgrade my-release my-chart -n my-namespace
+        5) Uninstall a Helm release:
+        > helm uninstall my-release -n my-namespace
+        6) List all Helm releases:
+        > helm list -n my-namespace
+        7) Get details of a Helm release:
+        > helm get all my-release -n my-namespace
+        8) Get values of a Helm release:
+        > helm get values my-release -n my-namespace
+        9) Get manifest of a Helm release:
+        > helm get manifest my-release -n my-namespace
+        10) Rollback a Helm release:
+        > helm rollback my-release <revision> -n my-namespace
+        11) Show the status of a Helm release:
+        > helm status my-release -n my-namespace
+        12) Get the history of a Helm release:
+        > helm history my-release -n my-namespace
+        13) Get the chart used in a Helm release:
+        > helm get chart my-release -n my-namespace
+        14) Get the hooks of a Helm release:
+        > helm get hooks my-release -n my-namespace
+        15) Get the notes of a Helm release:
+        > helm get notes my-release -n my-namespace 
+        16) Get the templates of a Helm release:
+        > helm get templates my-release -n my-namespace 
+        17) Get the values of a Helm release in JSON format:
+        > helm get values my-release -n my-namespace -o json    
+        18) Get the manifest of a Helm release in JSON format:
+        > helm get manifest my-release -n my-namespace -o json  
+        19) Get the status of a Helm release in JSON format:
+        > helm status my-release -n my-namespace -o json    
+        20) Get the history of a Helm release in JSON format:
+        > helm history my-release -n my-namespace -o json   
+        21) Get the chart used in a Helm release in JSON format:
+        > helm get chart my-release -n my-namespace -o json 
+        22) Get the hooks of a Helm release in JSON format:
+        > helm get hooks my-release -n my-namespace -o json 
+        23) Get the notes of a Helm release in JSON format:
+        > helm get notes my-release -n my-namespace -o json
+        24) Get the templates of a Helm release in JSON format:
+        > helm get templates my-release -n my-namespace -o json 
+        25) Get the values of a Helm release in YAML format:
+        > helm get values my-release -n my-namespace -o yaml    
+        26) Get the manifest of a Helm release in YAML format:
+        > helm get manifest my-release -n my-namespace -o yaml  
