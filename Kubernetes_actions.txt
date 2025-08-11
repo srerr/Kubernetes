@@ -669,6 +669,30 @@ Using kubectl imparative commands and sysntax from biginners to advanced level.:
         > kubectl get ingress my-ingress -n my-namespace -o jsonpath='{{.spec.rules[*].http.paths[*].backend.nodeSelector}}'
         40) Get Ingress's backend service tolerations:
         > kubectl get ingress my-ingress -n my-namespace -o jsonpath='{{.spec.rules[*].http.paths[*].backend.tolerations}}'
+    # persistent volume level:
+    -------------------
+        1) Get PersistentVolumeClaim's status:
+        > kubectl get pvc my-pvc -n my-namespace -o jsonpath='{.status.phase}'
+        2) Get PersistentVolumeClaim's storage class:
+        > kubectl get pvc my-pvc -n my-namespace -o jsonpath='{.spec.storageClassName}'
+        3) Get PersistentVolumeClaim's access modes:
+        > kubectl get pvc my-pvc -n my-namespace -o jsonpath='{.spec.accessModes}'
+        4) Get PersistentVolumeClaim's resources requests:
+        > kubectl get pvc my-pvc -n my-namespace -o jsonpath='{.spec.resources.requests}'
+        5) Get PersistentVolumeClaim's resources limits:
+        > kubectl get pvc my-pvc -n my-namespace -o jsonpath='{.spec.resources.limits}'
+        6) edit PersistentVolumeClaim:
+        > kubectl edit pvc my-pvc -n my-namespace   
+        7) Get PersistentVolumeClaim's labels:
+        > kubectl get pvc my-pvc -n my-namespace --show-labels
+        8) Get PersistentVolumeClaim's annotations:
+        > kubectl get pvc my-pvc -n my-namespace -o jsonpath='{{.metadata.annotations}}'
+        9) Get pvc yaml:
+        > kubectl get pvc my-pvc -n my-namespace -o yaml
+        10) edit yaml of PersistentVolumeClaim:
+        > kubectl get pvc my-pvc -n my-namespace -o yaml | kubectl apply -f -
+        11) Get PersistentVolumeClaim's creation timestamp:
+        > kubectl get pvc my-pvc -n my-namespace -o jsonpath='{.metadata.creationTimestamp}'
     # HELM:
     -------------------
         1) Install a Helm chart:
