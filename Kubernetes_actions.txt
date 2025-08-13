@@ -1,3 +1,28 @@
+# Kubectl config Commands:
+--------------------------
+    1) View current context:
+        > kubectl config current-context
+    2) View all contexts:
+        > kubectl config get-contexts
+    3) Switch context:
+        > kubectl config use-context <context-name>
+    4) View cluster info:
+        > kubectl cluster-info
+    5) View kubeconfig file:
+        > kubectl config view
+    6) Set a new context:
+        > kubectl config set-context <context-name> --cluster=<cluster-name> --user=<user-name>
+    7) Delete a context:
+        > kubectl config delete-context <context-name>  
+    8) Rename a context:
+        > kubectl config rename-context <old-context-name> <new-context-name>
+    9) View context details:
+        > kubectl config view-context <context-name>
+    10) Set a default namespace for a context:
+        > kubectl config set-context <context-name> --namespace=<namespace>
+    11) View all contexts:
+        > kubectl config get-contexts
+
 Using kubectl imparative commands and sysntax from biginners to advanced level.:
 ===============================================================================
     # Pod level:
