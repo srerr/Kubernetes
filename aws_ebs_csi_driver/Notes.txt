@@ -215,3 +215,46 @@
         -https://aws.amazon.com/support 
     -Refer to the AWS EBS CSI Driver documentation for additional resources and troubleshooting guides:
         -https://docs.aws.amazon.com/eks/latest/userguide/ebs-csi.html
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+1.StorageClass.yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: ebs-sc
+provisioner: ebs.csi.aws.com
+parameters:
+  type: gp3
+  fsType: ext4
+provisioner: ebs.csi.aws.com
+reclaimPolicy: Retain
+volumeBindingMode: WaitForFirstConsumer
+
+#explanation:
+-->This YAML manifest defines a StorageClass named "ebs-sc" that uses the AWS EBS CSI Driver as the provisioner. The parameters specify that the EBS volume type is "gp3" and the filesystem type is "ext4". The reclaim policy is set to "Retain", meaning that the volume will not be deleted when the associated PersistentVolumeClaim is deleted. The volume binding mode is set to "WaitForFirstConsumer", which means that the volume will only be provisioned when a Pod that uses the PVC is scheduled.   
+provisioner: is the CSI driver name for AWS EBS.
+parameters: specify the volume type and filesystem type.
+reclaimPolicy: determines what happens to the volume when the PVC is deleted.
+volumeBindingMode: controls when volume binding and dynamic provisioning occurs.
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+2.PersistentVolumeClaim.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ebs-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+    storageClassName: ebs-sc
+    resources:
+      requests:
+        storage: 10Gi   
+#explanation:
+-->This YAML manifest defines a PersistentVolumeClaim (PVC) named "ebs-pvc" that requests 10Gi of storage. The access mode is set to "ReadWriteOnce", allowing the volume to be mounted as read-write by a single node. The PVC uses the StorageClass "ebs-sc" defined earlier, which provisions an EBS volume using the AWS EBS CSI Driver.
+accessModes: specifies how the volume can be accessed.
+storageClassName: links the PVC to the StorageClass for dynamic provisioning.
+resources.requests.storage: defines the amount of storage requested by the PVC.
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
