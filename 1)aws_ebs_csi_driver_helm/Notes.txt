@@ -258,3 +258,14 @@ accessModes: specifies how the volume can be accessed.
 storageClassName: links the PVC to the StorageClass for dynamic provisioning.
 resources.requests.storage: defines the amount of storage requested by the PVC.
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+#Downloading helm charts for AWS EBS CSI Driver using helm comands:
+-------------------------------------------------------------------`
+--->helm repo add aws-ebs-csi-driver https://kubernetes-sigs.github.io/aws-ebs-csi-driver
+--->helm repo update
+-->helm search repo aws-ebs-csi-driver --versions
+-->helm pull aws-ebs-csi-driver/aws-ebs-csi-driver --untar --version 2.53.0
+
+-------------------------------------------------------------------`
