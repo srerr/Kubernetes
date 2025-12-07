@@ -15,9 +15,9 @@ Phase - 1:
  
 Phase -2:
 -----------
-CI/CD(Jenkins/GitHub Actions)
+1)CI/CD(Jenkins/GitHub Actions)
  
 Phase -3:
 ----------
-AWS
-IAC(Terraform)
+1)AWS
+2)IAC(Terraform)
