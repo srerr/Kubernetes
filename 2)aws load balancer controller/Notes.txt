@@ -1,0 +1,52 @@
+# AWS Load Balancer Controller Notes:
+------------------------------------
+- The AWS Load Balancer Controller is used to manage AWS Elastic Load Balancers for a Kubernetes cluster.
+- It supports both Application Load Balancers (ALB) and Network Load Balancers (NLB).
+- The controller automatically provisions and configures load balancers based on Kubernetes Ingress and Service resources.
+- It requires specific IAM permissions to interact with AWS resources, which can be granted via IAM roles for service accounts (IRSA).
+- The controller can be installed using Helm charts or Kubernetes manifests.
+- It is important to monitor the controller's logs for troubleshooting and ensuring proper operation.
+- The controller supports features like SSL termination, path-based routing, and host-based routing.    
+- Regular updates and maintenance of the controller are necessary to keep up with new features and security patches.------------------------------------    
+- Documentation and community support are available for assistance with configuration and best practices.   
+`------------------------------------
+
+# Installing AWS Load Balancer Controller:
+------------------------------------
+1. Create an IAM policy with the required permissions for the AWS Load Balancer Controller.
+2. Create an IAM role and attach the policy to it, enabling IRSA for your Kubernetes cluster.
+3. Install the AWS Load Balancer Controller using Helm or Kubernetes manifests.
+    Important Note 1: If you're deploying the controller to Amazon EC2 nodes that have restricted access to the Amazon EC2 instance metadata service (IMDS), or if you're deploying to Fargate, then add the following flags to the command that you run:
+        --set region=region-code
+        --set vpcId=vpc-xxxxxxxx
+    Important Note 2: DEPRECATED: If you're deploying to any Region other than us-west-2, then add the following flag to the command that you run, replacing account and region-code with the values for your region listed in Amazon EKS add-on container image addresses.
+        --set image.repository=602401143452.dkr.ecr.region-code.amazonaws.com/amazon/aws-load-balancer-controller
+        See: https://docs.aws.amazon.com/eks/latest/userguide/add-ons-images.html
+EX:
+
+# Add the eks-charts repository.
+helm repo add eks https://aws.github.io/eks-charts
+
+# Update your local repo to make sure that you have the most recent charts.
+helm repo update
+
+# Install the AWS Load Balancer Controller.
+## Template
+helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
+  -n kube-system \
+  --set clusterName=<cluster-name> \
+  --set serviceAccount.create=false \
+  --set serviceAccount.name=aws-load-balancer-controller \
+  --set region=<region-code> \
+  --set vpcId=<vpc-xxxxxxxx> \
+  --set image.repository=public.ecr.aws/eks/aws-load-balancer-controller
+-------------------------------------------------------------------------------------
+
+
+#Downloading helm charts for AWS EBS CSI Driver using helm comands:
+-------------------------------------------------------------------
+-->helm repo add eks https://aws.github.io/eks-charts
+-->helm repo update
+-->helm search repo eks/aws-load-balancer-controller --versions
+-->helm pull eks/aws-load-balancer-controller --version 1.16.0 --untar
+----------------------------------------------------------------------
