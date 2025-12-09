@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  name: aws-alb-controller
+  annotations:
+    ingressclass.kubernetes.io/is-default-class: "true"
+spec:
+  controller: ingress.k8s.aws/alb
+  
+
+# About IngressClass:
+# An IngressClass resource is used to define a class of Ingress within a Kubernetes cluster.
+# It allows cluster administrators to specify different types of Ingress controllers that can be used to manage Ingress resources.# The 'controller' field specifies the name of the Ingress controller that should handle Ingress resources of this class.# In this case, the controller is set to 'ingress.k8s.aws/alb', indicating that the AWS Load Balancer Controller will manage Ingress resources associated with this IngressClass.# The annotation 'ingressclass.kubernetes.io/is-default-class: "true"' designates this IngressClass as the default class for the cluster.# This means that if an Ingress resource does not specify an IngressClass, it will be automatically associated with this default IngressClass.   
+# This is particularly useful in environments where multiple Ingress controllers are deployed, as it provides a clear default behavior for Ingress resources.# By defining an IngressClass, administrators can ensure that the appropriate controller is used for managing traffic routing and load balancing within the Kubernetes cluster.
+# Additional parameters for the IngressClass can be specified here if needed.
+# For example, you could add a 'parameters' field to reference a ConfigMap or Custom Resource that contains specific configuration settings for the AWS Load Balancer Controller.
+# parameters:
+#   apiGroup: <api-group>
+#   kind: <kind>
+#   name: <name>

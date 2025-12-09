@@ -22,6 +22,7 @@
     Important Note 2: DEPRECATED: If you're deploying to any Region other than us-west-2, then add the following flag to the command that you run, replacing account and region-code with the values for your region listed in Amazon EKS add-on container image addresses.
         --set image.repository=602401143452.dkr.ecr.region-code.amazonaws.com/amazon/aws-load-balancer-controller
         See: https://docs.aws.amazon.com/eks/latest/userguide/add-ons-images.html
+4. AWS load balancer annotation references: https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.16/
 EX:
 
 # Add the eks-charts repository.
