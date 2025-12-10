@@ -1,0 +1,21 @@
+#External DNS:
+--------------
+- External DNS is a tool that automatically manages DNS records for Kubernetes resources.
+- It supports multiple DNS providers such as AWS Route 53, Google Cloud DNS, Cloudflare, and others.
+- External DNS watches Kubernetes resources like Services and Ingresses and creates or updates DNS records based on the resource specifications.
+- It helps in automating the process of DNS management, reducing manual intervention and potential errors.  
+- External DNS can be configured using command-line flags or environment variables to specify the DNS provider, domain filters, and other settings.
+- It is commonly deployed as a pod within the Kubernetes cluster, often using a Deployment or DaemonSet.
+- External DNS requires appropriate permissions to manage DNS records, which can be provided through cloud provider IAM roles or service accounts.
+- It is important to monitor External DNS logs and metrics to ensure it is functioning correctly and to troubleshoot any issues that may arise.
+- External DNS can be integrated with CI/CD pipelines to automate DNS record management as part of application deployment processes.
+- For more information and configuration options, refer to the official External DNS documentation: https://github.com/kubernetes-sigs/external-dns 
+
+------------------------------
+
+#Downloading helm charts for AWS EBS CSI Driver using helm comands:
+-------------------------------------------------------------------
+-->helm repo add bitnami https://charts.bitnami.com/bitnami
+-->helm repo update
+-->helm search repo bitnami/external-dns --versions
+-->helm pull bitnami/external-dns --version 9.0.3 --untar
