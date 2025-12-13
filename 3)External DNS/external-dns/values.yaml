@@ -11,7 +11,7 @@
 ## @param global.imagePullSecrets Global Docker registry secret names as an array
 ##
 global:
-  imageRegistry: ""
+  imageRegistry: ''
   ## E.g.
   ## imagePullSecrets:
   ##   - myRegistryKeySecretName
@@ -36,13 +36,13 @@ global:
 
 ## @param nameOverride String to partially override common.names.fullname template (will maintain the release name)
 ##
-nameOverride: ""
+nameOverride: ''
 ## @param fullnameOverride String to fully override common.names.fullname template
 ##
-fullnameOverride: ""
+fullnameOverride: ''
 ## @param namespaceOverride String to fully override common.names.namespace
 ##
-namespaceOverride: ""
+namespaceOverride: ''
 ## @param clusterDomain Kubernetes Cluster Domain
 ##
 clusterDomain: cluster.local
@@ -58,7 +58,7 @@ commonAnnotations: {}
 extraDeploy: []
 ## @param kubeVersion Force target Kubernetes version (using Helm capabilities if not set)
 ##
-kubeVersion: ""
+kubeVersion: ''
 
 ## @section external-dns parameters
 ##
@@ -76,7 +76,7 @@ image:
   registry: docker.io
   repository: bitnami/external-dns
   tag: 0.18.0-debian-12-r4
-  digest: ""
+  digest: ''
   ## Specify a imagePullPolicy
   ## ref: https://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images
   ##
@@ -116,10 +116,10 @@ sources:
   - service
   - ingress
   # - contour-httpproxy
-## @param provider DNS provider where the DNS records will be created.
-## Available providers are:
-## - akamai, alibabacloud, aws, azure, azure-private-dns, civo, cloudflare, coredns, digitalocean, exoscale, google, linode, ns1, oci, ovh, pdns, pihole, rfc2136, scaleway, transip
-##
+  ## @param provider DNS provider where the DNS records will be created.
+  ## Available providers are:
+  ## - akamai, alibabacloud, aws, azure, azure-private-dns, civo, cloudflare, coredns, digitalocean, exoscale, google, linode, ns1, oci, ovh, pdns, pihole, rfc2136, scaleway, transip
+  ##
 provider: aws
 ## @param initContainers Attach additional init containers to the pod (evaluated as a template)
 ##
@@ -130,7 +130,7 @@ initContainers: []
 ## DNS policies can be set on a per-Pod basis. Currently Kubernetes supports the following Pod-specific DNS policies.
 ## Available options: Default, ClusterFirst, ClusterFirstWithHostNet, None
 ## Ref: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy
-dnsPolicy: ""
+dnsPolicy: ''
 ## @param dnsConfig  allows users more control on the DNS settings for a Pod. Required if `dnsPolicy` is set to `None`
 ## The dnsConfig field is optional and it can work with any dnsPolicy settings.
 ## Ref: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-dns-config
@@ -153,7 +153,7 @@ sidecars: []
 ## ref: https://github.com/kubernetes-sigs/external-dns/blob/master/pkg/apis/externaldns/types.go#L272
 ## @param namespace Limit sources of endpoints to a specific namespace (default: all namespaces)
 ##
-namespace: ""
+namespace: ''
 ## @param watchReleaseNamespace Watch only namespace used for the release
 ##
 watchReleaseNamespace: false
@@ -190,43 +190,43 @@ validation:
 akamai:
   ## @param akamai.host Hostname to use for EdgeGrid auth
   ##
-  host: ""
+  host: ''
   ## @param akamai.accessToken Access Token to use for EdgeGrid auth
   ##
-  accessToken: ""
+  accessToken: ''
   ## @param akamai.clientToken Client Token to use for EdgeGrid auth
   ##
-  clientToken: ""
+  clientToken: ''
   ## @param akamai.clientSecret When using the Akamai provider, `AKAMAI_CLIENT_SECRET` to set (optional)
   ##
-  clientSecret: ""
+  clientSecret: ''
   ## @param akamai.secretName Use an existing secret with key "akamai_api_seret" defined.
   ## This ignores akamai.clientSecret
   ##
-  secretName: ""
+  secretName: ''
 ## Alibaba cloud configuration to be set via arguments/env. variables
 ## These will be added to /etc/kubernetes/alibaba-cloud.json via secret
 ##
 alibabacloud:
   ## @param alibabacloud.accessKeyId When using the Alibaba Cloud provider, set `accessKeyId` in the Alibaba Cloud configuration file (optional)
   ##
-  accessKeyId: ""
+  accessKeyId: ''
   ## @param alibabacloud.accessKeySecret When using the Alibaba Cloud provider, set `accessKeySecret` in the Alibaba Cloud configuration file (optional)
   ##
-  accessKeySecret: ""
+  accessKeySecret: ''
   ## @param alibabacloud.regionId When using the Alibaba Cloud provider, set `regionId` in the Alibaba Cloud configuration file (optional)
   ##
-  regionId: ""
+  regionId: ''
   ## @param alibabacloud.vpcId Alibaba Cloud VPC Id
   ##
-  vpcId: ""
+  vpcId: ''
   ## @param alibabacloud.secretName Use an existing secret with key "alibaba-cloud.json" defined.
   ## This ignores alibabacloud.accessKeyId, and alibabacloud.accessKeySecret
   ##
-  secretName: ""
+  secretName: ''
   ## @param alibabacloud.zoneType Zone Filter. Available values are: public, private, or no value for both
   ##
-  zoneType: ""
+  zoneType: ''
 ## AWS configuration to be set via arguments/env. variables
 ##
 aws:
@@ -236,42 +236,42 @@ aws:
   ## @param aws.credentials.mountPath When using the AWS provider, determine `mountPath` for `credentials` secret
   ##
   credentials:
-    secretKey: ""
-    accessKey: ""
+    secretKey: ''
+    accessKey: ''
     ## Before external-dns 0.5.9 home dir should be `/root/.aws`
     ##
-    mountPath: "/.aws"
+    mountPath: /.aws
     ## @param aws.credentials.secretName Use an existing secret with key "credentials" defined.
     ## This ignores aws.credentials.secretKey, and aws.credentials.accessKey
     ##
-    secretName: ""
+    secretName: ''
     ## AWS access key id stored in key-value secret.
     ## If aws.credentials.accessKeyIDSecretRef and aws.credentials.secretAccessKeySecretRef defined aws.credentials.secretKey, aws.credentials.accessKey and aws.credentials.secretName are ignored
     ## @param aws.credentials.accessKeyIDSecretRef.name Define the name of the secret that stores aws_access_key_id.
     ## @param aws.credentials.accessKeyIDSecretRef.key Define the key of the secret that stores aws_access_key_id.
     ##
     accessKeyIDSecretRef:
-      name: ""
-      key: ""
+      name: ''
+      key: ''
     ## AWS secret access key stored in key-value secret
     ## @param aws.credentials.secretAccessKeySecretRef.name Define the name of the secret that stores aws_secret_access_key
     ## @param aws.credentials.secretAccessKeySecretRef.key Define the key of the secret that stores aws_secret_access_key
     ##
     secretAccessKeySecretRef:
-      name: ""
-      key: ""
+      name: ''
+      key: ''
   ## @param aws.region When using the AWS provider, `AWS_DEFAULT_REGION` to set in the environment (optional)
   ##
-  region: "us-east-1"
+  region: us-east-1
   ## @param aws.zoneType When using the AWS provider, filter for zones of this type (optional, options: public, private)
   ##
-  zoneType: ""
+  zoneType: ''
   ## @param aws.assumeRoleArn When using the AWS provider, assume role by specifying --aws-assume-role to the external-dns daemon
   ##
-  assumeRoleArn: ""
+  assumeRoleArn: ''
   ## @param aws.roleArn Specify role ARN to the external-dns daemon
   ##
-  roleArn: ""
+  roleArn: ''
   ## @param aws.apiRetries Maximum number of retries for AWS API calls before giving up
   ##
   apiRetries: 3
@@ -287,18 +287,18 @@ aws:
   zoneTags: []
   ## @param aws.preferCNAME When using the AWS provider, replaces Alias records with CNAME (options: true, false)
   ##
-  preferCNAME: ""
+  preferCNAME: ''
   ## @param aws.evaluateTargetHealth When using the AWS provider, sets the evaluate target health flag (options: true, false)
   ##
-  evaluateTargetHealth: ""
+  evaluateTargetHealth: ''
   ## @param aws.dynamodbTable When using the AWS provider, sets the DynamoDB table name to use for dynamodb registry
   ## ref: https://github.com/kubernetes-sigs/external-dns/blob/0483ffde22e60436f16be154b9fe1a388a1400d0/docs/registry/dynamodb.md
   ##
-  dynamodbTable: ""
+  dynamodbTable: ''
   ## @param aws.dynamodbRegion When using the AWS provider, sets the DynamoDB table region to use for dynamodb registry
   ## ref: https://github.com/kubernetes-sigs/external-dns/blob/0483ffde22e60436f16be154b9fe1a388a1400d0/docs/registry/dynamodb.md
   ##
-  dynamodbRegion: ""
+  dynamodbRegion: ''
   ## @param aws.zoneMatchParent When using the AWS provider, lets a domain filter match subdomains within the same zone by using their parent domain
   ##
   zoneMatchParent: false
@@ -308,25 +308,25 @@ azure:
   ## When a secret to load azure.json is not specified, the host's /etc/kubernetes/azure.json will be used
   ## @param azure.secretName When using the Azure provider, set the secret containing the `azure.json` file
   ##
-  secretName: ""
+  secretName: ''
   ## @param azure.cloud When using the Azure provider, set the Azure Cloud
   ##
-  cloud: ""
+  cloud: ''
   ## @param azure.resourceGroup When using the Azure provider, set the Azure Resource Group
   ##
-  resourceGroup: ""
+  resourceGroup: ''
   ## @param azure.tenantId When using the Azure provider, set the Azure Tenant ID
   ##
-  tenantId: ""
+  tenantId: ''
   ## @param azure.subscriptionId When using the Azure provider, set the Azure Subscription ID
   ##
-  subscriptionId: ""
+  subscriptionId: ''
   ## @param azure.aadClientId When using the Azure provider, set the Azure AAD Client ID
   ##
-  aadClientId: ""
+  aadClientId: ''
   ## @param azure.aadClientSecret When using the Azure provider, set the Azure AAD Client Secret
   ##
-  aadClientSecret: ""
+  aadClientSecret: ''
   ## @param azure.useWorkloadIdentityExtension When using the Azure provider, set if you use Workload Identity extension.
   ##
   useWorkloadIdentityExtension: false
@@ -335,33 +335,33 @@ azure:
   useManagedIdentityExtension: false
   ## @param azure.userAssignedIdentityID When using the Azure provider with Azure MSI, set Client ID of Azure user-assigned managed identity (optional, otherwise system-assigned managed identity is used)
   ##
-  userAssignedIdentityID: ""
+  userAssignedIdentityID: ''
 ## Civo configuration to be set via arguments/env. variables
 ##
 civo:
   ## @param civo.apiToken When using the Civo provider, `CIVO_TOKEN` to set (optional)
   ##
-  apiToken: ""
+  apiToken: ''
   ## @param civo.secretName Use an existing secret with key "apiToken" defined.
   ## This ignores civo.apiToken
   ##
-  secretName: ""
+  secretName: ''
 ## Cloudflare configuration to be set via arguments/env. variables
 ##
 cloudflare:
   ## @param cloudflare.apiToken When using the Cloudflare provider, `CF_API_TOKEN` to set (optional)
   ##
-  apiToken: ""
+  apiToken: ''
   ## @param cloudflare.apiKey When using the Cloudflare provider, `CF_API_KEY` to set (optional)
   ##
-  apiKey: ""
+  apiKey: ''
   ## @param cloudflare.secretName When using the Cloudflare provider, it's the name of the secret containing cloudflare_api_token or cloudflare_api_key.
   ## This ignores cloudflare.apiToken, and cloudflare.apiKey
   ##
-  secretName: ""
+  secretName: ''
   ## @param cloudflare.email When using the Cloudflare provider, `CF_API_EMAIL` to set (optional). Needed when using CF_API_KEY
   ##
-  email: ""
+  email: ''
   ## @param cloudflare.proxied When using the Cloudflare provider, enable the proxy feature (DDOS protection, CDN...) (optional)
   ##
   proxied: true
@@ -375,7 +375,7 @@ cloudflare:
   ## @param cloudflare.regionKey Set default region, when Cloudflare Regional Services are enabled. (optional)
   ## Using the "external-dns.alpha.kubernetes.io/cloudflare-region-key" annotation on your ingress, you can specify the region for that record.
   ##
-  regionKey: ""
+  regionKey: ''
 ## CoreDNS configuration to be set via arguments/env variables
 ##
 coredns:
@@ -383,7 +383,7 @@ coredns:
   ## Secure (https) endpoints can be used as well, in that case `etcdTLS` section
   ## should be filled in accordingly
   ##
-  etcdEndpoints: "http://etcd-extdns:2379"
+  etcdEndpoints: http://etcd-extdns:2379
   ## Configuration of the secure communication and client authentication to the etcd cluster
   ## If enabled all the values under this key must hold a valid data
   ##
@@ -399,34 +399,34 @@ coredns:
     ## ref (secret creation):
     ##  https://github.com/bitnami/charts/tree/main/bitnami/etcd#configure-certificates-for-client-communication
     ##
-    secretName: "etcd-client-certs"
+    secretName: etcd-client-certs
     ## @param coredns.etcdTLS.mountPath When using the CoreDNS provider, set destination dir to mount data from `coredns.etcdTLS.secretName` to
     ##
-    mountPath: "/etc/coredns/tls/etcd"
+    mountPath: /etc/coredns/tls/etcd
     ## @param coredns.etcdTLS.caFilename When using the CoreDNS provider, specify CA PEM file name from the `coredns.etcdTLS.secretName`
     ##
-    caFilename: "ca.crt"
+    caFilename: ca.crt
     ## @param coredns.etcdTLS.certFilename When using the CoreDNS provider, specify cert PEM file name from the `coredns.etcdTLS.secretName`
     ## Will be used by external-dns to authenticate against etcd
     ##
-    certFilename: "cert.pem"
+    certFilename: cert.pem
     ## @param coredns.etcdTLS.keyFilename When using the CoreDNS provider, specify private key PEM file name from the `coredns.etcdTLS.secretName`
     ## Will be used by external-dns to authenticate against etcd
     ##
-    keyFilename: "key.pem"
+    keyFilename: key.pem
 ## Exoscale configuration to be set via arguments/env. variables
 ##
 exoscale:
   ## @param exoscale.apiKey When using the Exoscale provider, `EXTERNAL_DNS_EXOSCALE_APIKEY` to set (optional)
   ##
-  apiKey: ""
+  apiKey: ''
   ## @param exoscale.apiToken When using the Exoscale provider, `EXTERNAL_DNS_EXOSCALE_APISECRET` to set (optional)
   ##
-  apiToken: ""
+  apiToken: ''
   ## @param exoscale.secretName Use an existing secret with keys "exoscale_api_key" and "exoscale_api_token" defined.
   ## This ignores exoscale.apiKey and exoscale.apiToken
   ##
-  secretName: ""
+  secretName: ''
 ## Google configuration to be set via arguments/env. variables
 ##
 ## DigitalOcean configuration to be set via arguments/env. variables
@@ -434,42 +434,42 @@ exoscale:
 digitalocean:
   ## @param digitalocean.apiToken When using the DigitalOcean provider, `DO_TOKEN` to set (optional)
   ##
-  apiToken: ""
+  apiToken: ''
   ## @param digitalocean.secretName Use an existing secret with key "digitalocean_api_token" defined.
   ## This ignores digitalocean.apiToken
   ##
-  secretName: ""
+  secretName: ''
 ## Google configuration to be set via arguments/env. variables
 ##
 google:
   ## @param google.project When using the Google provider, specify the Google project (required when provider=google)
   ##
-  project: ""
+  project: ''
   ## @param google.batchChangeSize When using the google provider, set the maximum number of changes that will be applied in each batch
   ##
   batchChangeSize: 1000
   ## @param google.serviceAccountSecret When using the Google provider, specify the existing secret which contains credentials.json (optional)
   ##
-  serviceAccountSecret: ""
+  serviceAccountSecret: ''
   ## @param google.serviceAccountSecretKey When using the Google provider with an existing secret, specify the key name (optional)
   ##
-  serviceAccountSecretKey: "credentials.json"
+  serviceAccountSecretKey: credentials.json
   ## @param google.serviceAccountKey When using the Google provider, specify the service account key JSON file. In this case a new secret will be created holding this service account (optional)
   ##
-  serviceAccountKey: ""
+  serviceAccountKey: ''
   ## @param google.zoneVisibility When using the Google provider, fiter for zones of a specific visibility (private or public)
   ##
-  zoneVisibility: ""
+  zoneVisibility: ''
 ## Linode configuration to be set via arguments/env. variables
 ##
 linode:
   ## @param linode.apiToken When using the Linode provider, `LINODE_TOKEN` to set (optional)
   ##
-  apiToken: ""
+  apiToken: ''
   ## @param linode.secretName Use an existing secret with key "linode_api_token" defined.
   ## This ignores linode.apiToken
   ##
-  secretName: ""
+  secretName: ''
 ## NS1 configuration to be set via arguments/env. variables
 ##
 ns1:
@@ -478,26 +478,26 @@ ns1:
   minTTL: 10
   ## @param ns1.apiKey When using the ns1 provider, specify the API key to use
   ##
-  apiKey: ""
+  apiKey: ''
   ## @param ns1.secretName Use an existing secret with key "ns1-api-key" defined.
   ## This ignores ns1.apiToken
   ##
-  secretName: ""
+  secretName: ''
 ## Pi-hole configuration to be set via arguments/env. variables
 ##
 pihole:
   ## @param pihole.server When using the Pi-hole provider, specify The address of the Pi-hole web server
   ##
-  server: ""
+  server: ''
   ## @param pihole.tlsSkipVerify When using the Pi-hole provider, specify wheter to skip verification of any TLS certificates served by the Pi-hole web server
   ##
-  tlsSkipVerify: ""
+  tlsSkipVerify: ''
   ## @param pihole.password When using the Pi-hole provider, specify a password to use
   ##
-  password: ""
+  password: ''
   ## @param pihole.secretName Use an existing secret with key "pihole_password" defined.
   ##
-  secretName: ""
+  secretName: ''
 ## Compatibility adaptations for Traefik
 ##
 traefik:
@@ -512,16 +512,16 @@ traefik:
 oci:
   ## @param oci.region When using the OCI provider, specify the region, where your zone is located in.
   ##
-  region: ""
+  region: ''
   ## @param oci.tenancyOCID When using the OCI provider, specify your Tenancy OCID
   ##
-  tenancyOCID: ""
+  tenancyOCID: ''
   ## @param oci.userOCID When using the OCI provider, specify your User OCID
   ##
-  userOCID: ""
+  userOCID: ''
   ## @param oci.compartmentOCID When using the OCI provider, specify your Compartment OCID where your DNS Zone is located in.
   ##
-  compartmentOCID: ""
+  compartmentOCID: ''
   ## @param oci.privateKey [string] When using the OCI provider, paste in your RSA private key file for the Oracle API
   ##
   privateKey: |
@@ -529,14 +529,14 @@ oci:
     -----END RSA PRIVATE KEY-----
   ## @param oci.privateKeyFingerprint When using the OCI provider, put in the fingerprint of your privateKey
   ##
-  privateKeyFingerprint: ""
+  privateKeyFingerprint: ''
   ## @param oci.privateKeyPassphrase When using the OCI provider and your privateKey has a passphrase, put it in here. (optional)
   ##
-  privateKeyPassphrase: ""
+  privateKeyPassphrase: ''
   ## @param oci.secretName When using the OCI provider, it's the name of the secret containing `oci.yaml` file.
   ## Ref: https://github.com/kubernetes-sigs/external-dns/blob/master/docs/tutorials/oracle.md#deploy-externaldns
   ##
-  secretName: ""
+  secretName: ''
   ## @param oci.useInstancePrincipal When using the OCI provider, enable IAM Instance Principal
   ## Ref: https://github.com/kubernetes-sigs/external-dns/blob/master/docs/tutorials/oracle.md#oci-iam-instance-principal
   useInstancePrincipal: false
@@ -548,13 +548,13 @@ oci:
 ovh:
   ## @param ovh.consumerKey When using the OVH provider, specify the existing consumer key. (required when provider=ovh and `ovh.secretName` is not provided.)
   ##
-  consumerKey: ""
+  consumerKey: ''
   ## @param ovh.applicationKey When using the OVH provider with an existing application, specify the application key. (required when provider=ovh and `ovh.secretName` is not provided.)
   ##
-  applicationKey: ""
+  applicationKey: ''
   ## @param ovh.applicationSecret When using the OVH provider with an existing application, specify the application secret. (required when provider=ovh and `ovh.secretName` is not provided.)
   ##
-  applicationSecret: ""
+  applicationSecret: ''
   ## @param ovh.secretName When using the OVH provider, it's the name of the secret containing `ovh_consumer_key`, `ovh_application_key` and `ovh_application_secret`. Disables usage of other `ovh`.
   ## with following keys:
   ##  - ovh_consumer_key
@@ -562,42 +562,42 @@ ovh:
   ##  - ovh_application_secret
   ## This ignores consumerKey, applicationKey & applicationSecret
   ##
-  secretName: ""
+  secretName: ''
 ## Scaleway configuration to be set via arguments/env. variables
 ##
 scaleway:
   ## @param scaleway.scwAccessKey When using the Scaleway provider, specify an existing access key. (required when provider=scaleway)
   ##
-  scwAccessKey: ""
+  scwAccessKey: ''
   ## @param scaleway.scwSecretKey When using the Scaleway provider, specify an existing secret key. (required when provider=scaleway)
   ##
-  scwSecretKey: ""
+  scwSecretKey: ''
   ## @param scaleway.secretName Use an existing secret with keys "scaleway_access_key" and "scaleway_secret_key" defined (optional).
   ## This ignores scaleway.scwAccessKey and scaleway.scwSecretKey
   ##
-  secretName: ""
+  secretName: ''
 ## RFC 2136 configuration to be set via arguments/env. variables
 ##
 rfc2136:
   ## @param rfc2136.host When using the rfc2136 provider, specify the RFC2136 host (required when provider=rfc2136)
   ##
-  host: ""
+  host: ''
   ## @param rfc2136.port When using the rfc2136 provider, specify the RFC2136 port (optional)
   ##
   port: 53
   ## @param rfc2136.zone DEPRECATED: use rfc2136.zones instead.
   ## Currently, the contents of rfc2136.zone and rfc2136.zones will be merged and deduplicated, in a future release this value will be removed in favor of `rfc2136.zones`.
   ##
-  zone: ""
+  zone: ''
   ## @param rfc2136.zones When using the rfc2136 provider, specify the zones (required when provider=rfc2136 and `rfc2136.zone` is not provided.)
   ##
   zones: []
   ## @param rfc2136.tsigSecret When using the rfc2136 provider, specify the tsig secret to enable security. (do not specify if `rfc2136.secretName` is provided.) (optional)
   ##
-  tsigSecret: ""
+  tsigSecret: ''
   ## @param rfc2136.secretName When using the rfc2136 provider, specify the existing secret which contains your tsig secret in the key "rfc2136_tsig_secret". Disables the usage of `rfc2136.tsigSecret` (optional)
   ##
-  secretName: ""
+  secretName: ''
   ## @param rfc2136.tsigSecretAlg When using the rfc2136 provider, specify the tsig secret to enable security (optional)
   ##
   tsigSecretAlg: hmac-sha256
@@ -609,46 +609,46 @@ rfc2136:
   tsigAxfr: true
   ## @param rfc2136.minTTL When using the rfc2136 provider, specify minimal TTL (in duration format) for records[ns, us, ms, s, m, h], see more <https://golang.org/pkg/time/#ParseDuration>
   ##
-  minTTL: "0s"
+  minTTL: 0s
   ## @param rfc2136.rfc3645Enabled When using the rfc2136 provider, extend using RFC3645 to support secure updates over Kerberos with GSS-TSIG
   ##
   rfc3645Enabled: false
   ## @param rfc2136.kerberosConfig When using the rfc2136 provider with rfc3645Enabled, the contents of a configuration file for krb5 (optional)
   ##
-  kerberosConfig: ""
+  kerberosConfig: ''
   ## @param rfc2136.kerberosUsername When using the rfc2136 provider with rfc3645Enabled, specify the username to authenticate with (optional)
   ##
-  kerberosUsername: ""
+  kerberosUsername: ''
   ## @param rfc2136.kerberosPassword When using the rfc2136 provider with rfc3645Enabled, specify the password to authenticate with (optional)
   ##
-  kerberosPassword: ""
+  kerberosPassword: ''
   ## @param rfc2136.kerberosRealm When using the rfc2136 provider with rfc3645Enabled, specify the realm to authenticate to (required when provider=rfc2136 and rfc2136.rfc3645Enabled=true)
   ##
-  kerberosRealm: ""
+  kerberosRealm: ''
 ## PowerDNS configuration to be set via arguments/env. variables
 ##
 pdns:
   ## @param pdns.apiUrl When using the PowerDNS provider, specify the API URL of the server.
   ##
-  apiUrl: ""
+  apiUrl: ''
   ## @param pdns.apiPort When using the PowerDNS provider, specify the API port of the server.
   ##
-  apiPort: "8081"
+  apiPort: '8081'
   ## @param pdns.apiKey When using the PowerDNS provider, specify the API key of the server.
   ##
-  apiKey: ""
+  apiKey: ''
   ## @param pdns.secretName When using the PowerDNS provider, specify as secret name containing the API Key
   ##
-  secretName: ""
+  secretName: ''
 ## TransIP configuration to be set via arguments/env. variables
 ##
 transip:
   ## @param transip.account When using the TransIP provider, specify the account name.
   ##
-  account: ""
+  account: ''
   ## @param transip.apiKey When using the TransIP provider, specify the API key to use.
   ##
-  apiKey: ""
+  apiKey: ''
 ## @param domainFilters Limit possible target zones by domain suffixes (optional)
 ##
 domainFilters: []
@@ -658,11 +658,11 @@ excludeDomains: []
 ## @param regexDomainFilter Limit possible target zones by regex domain suffixes (optional)
 ## If regexDomainFilter is specified, domainFilters will be ignored
 ##
-regexDomainFilter: ""
+regexDomainFilter: ''
 ## @param regexDomainExclusion Exclude subdomains by using regex pattern (optional)
 ## If regexDomainFilter is specified, excludeDomains will be ignored and external-dns will use regexDomainExclusion even though regexDomainExclusion is empty
 ##
-regexDomainExclusion: ""
+regexDomainExclusion: ''
 ## @param zoneNameFilters Filter target zones by zone domain (optional)
 ##
 zoneNameFilters: []
@@ -671,10 +671,10 @@ zoneNameFilters: []
 zoneIdFilters: []
 ## @param annotationFilter Filter sources managed by external-dns via annotation using label selector (optional)
 ##
-annotationFilter: ""
+annotationFilter: ''
 ## @param labelFilter Select sources managed by external-dns using label selector (optional)
 ##
-labelFilter: ""
+labelFilter: ''
 ## @param ingressClassFilters Filter sources managed by external-dns via IngressClass (optional)
 ##
 ingressClassFilters: []
@@ -689,7 +689,7 @@ dryRun: false
 triggerLoopOnEvent: false
 ## @param interval Interval update period to use
 ##
-interval: "1m"
+interval: 1m
 ## @param logLevel Verbosity of the logs (options: panic, debug, info, warning, error, fatal, trace)
 ##
 logLevel: info
@@ -702,13 +702,13 @@ policy: upsert-only
 ## @param registry Registry method to use (options: txt, aws-sd, dynamodb, noop)
 ## ref: https://github.com/kubernetes-sigs/external-dns/blob/master/docs/registry/registry.md
 ##
-registry: "txt"
+registry: txt
 ## @param txtPrefix When using the TXT registry, a prefix for ownership records that avoids collision with CNAME entries (optional)<CNAME record> (Mutual exclusive with txt-suffix)
 ##
-txtPrefix: ""
+txtPrefix: ''
 ## @param txtSuffix When using the TXT registry, a suffix for ownership records that avoids collision with CNAME entries (optional)<CNAME record>.suffix (Mutual exclusive with txt-prefix)
 ##
-txtSuffix: ""
+txtSuffix: ''
 ## @param txtNewFormatOnly When using the TXT registry, use only the new format for ownership records (optional)
 ## ref: https://github.com/kubernetes-sigs/external-dns/blob/master/docs/registry/txt.md#record-format-options
 ##
@@ -716,7 +716,7 @@ txtNewFormatOnly: false
 ## @param txtOwnerId A name that identifies this instance of ExternalDNS. Currently used by registry types: txt & aws-sd (optional)
 ## But other registry types might be added in the future.
 ##
-txtOwnerId: ""
+txtOwnerId: ''
 ## @param forceTxtOwnerId (backward compatibility) When using the non-TXT registry, it will pass the value defined by `txtOwnerId` down to the application (optional)
 ## This setting added for backward compatibility for
 ## customers who already used bitnami/external-dns helm chart
@@ -744,11 +744,11 @@ txtEncrypt:
   ## ref: https://github.com/kubernetes-sigs/external-dns/blob/master/docs/registry/txt.md#generating-the-txt-encryption-key
   ## Note: If txtEncrypt.enabled is enabled and txtEncrypt.aesKey is not set, a default key will be generated.
   ##
-  aesKey: ""
+  aesKey: ''
   ## @param txtEncrypt.secretName Use an existing secret with key "txt_aes_encryption_key" defined.
   ## This ignores txtEncrypt.aesKey
   ##
-  secretName: ""
+  secretName: ''
 ## @param extraArgs Extra arguments to be passed to external-dns
 ##
 extraArgs: {}
@@ -761,17 +761,17 @@ extraArgs: {}
 extraEnvVars: []
 ## @param extraEnvVarsCM ConfigMap containing extra env vars
 ##
-extraEnvVarsCM: ""
+extraEnvVarsCM: ''
 ## @param extraEnvVarsSecret Secret containing extra env vars (in case of sensitive data)
 ##
-extraEnvVarsSecret: ""
+extraEnvVarsSecret: ''
 ## @param lifecycleHooks [object] Override default etcd container hooks
 ##
 lifecycleHooks: {}
 ## @param schedulerName Alternative scheduler
 ## ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
 ##
-schedulerName: ""
+schedulerName: ''
 ## @param topologySpreadConstraints Topology Spread Constraints for pod assignment
 ## https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
 ## The value is evaluated as a template
@@ -780,7 +780,7 @@ topologySpreadConstraints: []
 ## @param podAffinityPreset Pod affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
 ## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
 ##
-podAffinityPreset: ""
+podAffinityPreset: ''
 ## @param podAntiAffinityPreset Pod anti-affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
 ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
 ## Allowed values: soft, hard
@@ -792,12 +792,12 @@ podAntiAffinityPreset: soft
 nodeAffinityPreset:
   ## @param nodeAffinityPreset.type Node affinity preset type. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
   ##
-  type: ""
+  type: ''
   ## @param nodeAffinityPreset.key Node label key to match Ignored if `affinity` is set.
   ## E.g.
   ## key: "kubernetes.io/e2e-az-name"
   ##
-  key: ""
+  key: ''
   ## @param nodeAffinityPreset.values Node label values to match. Ignored if `affinity` is set.
   ## E.g.
   ## values:
@@ -826,7 +826,7 @@ podAnnotations: {}
 podLabels: {}
 ## @param priorityClassName priorityClassName
 ##
-priorityClassName: ""
+priorityClassName: ''
 ## @param secretAnnotations Additional annotations to apply to the secret
 ##
 secretAnnotations: {}
@@ -838,10 +838,10 @@ crd:
   create: false
   ## @param crd.apiversion Sets the API version for the CRD to watch
   ##
-  apiversion: ""
+  apiversion: ''
   ## @param crd.kind Sets the kind for the CRD to watch
   ##
-  kind: ""
+  kind: ''
 ## Kubernetes svc configutarion
 ##
 service:
@@ -859,19 +859,19 @@ service:
   ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
   ##
   nodePorts:
-    http: ""
+    http: ''
   ## @param service.clusterIP IP address to assign to service
   ##
-  clusterIP: ""
+  clusterIP: ''
   ## @param service.externalIPs Service external IP addresses
   ##
   externalIPs: []
   ## @param service.externalName Service external name
   ##
-  externalName: ""
+  externalName: ''
   ## @param service.loadBalancerIP IP address to assign to load balancer (if supported)
   ##
-  loadBalancerIP: ""
+  loadBalancerIP: ''
   ## @param service.loadBalancerSourceRanges List of IP CIDRs allowed access to load balancer (if supported)
   ##
   loadBalancerSourceRanges: []
@@ -923,7 +923,10 @@ networkPolicy:
   allowExternalEgress: true
   ## @param networkPolicy.kubeAPIServerPorts [array] List of possible endpoints to kube-apiserver (limit to your cluster settings to increase security)
   ##
-  kubeAPIServerPorts: [443, 6443, 8443]
+  kubeAPIServerPorts:
+    - 443
+    - 6443
+    - 8443
   ## @param networkPolicy.extraIngress [array] Add extra ingress rules to the NetworkPolicy
   ## e.g:
   ## extraIngress:
@@ -971,7 +974,7 @@ serviceAccount:
   create: true
   ## @param serviceAccount.name ServiceAccount to use. A name is generated using the common.names.fullname template if it is not set
   ##
-  name: ""
+  name: ''
   ## @param serviceAccount.annotations Additional Service Account annotations
   ##
   annotations: {}
@@ -1025,9 +1028,10 @@ containerSecurityContext:
   allowPrivilegeEscalation: false
   readOnlyRootFilesystem: true
   capabilities:
-    drop: ["ALL"]
+    drop:
+      - ALL
   seccompProfile:
-    type: "RuntimeDefault"
+    type: RuntimeDefault
 ## @param podSecurityContext.enabled Enable pod security context
 ## @param podSecurityContext.fsGroupChangePolicy Set filesystem group change policy
 ## @param podSecurityContext.sysctls Set kernel settings using the sysctl interface
@@ -1049,7 +1053,7 @@ podSecurityContext:
 ## @param resourcesPreset Set container resources according to one common preset (allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge). This is ignored if resources is set (resources is recommended for production).
 ## More information: https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_resources.tpl#L15
 ##
-resourcesPreset: "nano"
+resourcesPreset: nano
 ## @param resources Set container requests and limits for different resources like CPU or memory (essential for production workloads)
 ## Example:
 ## resources:
@@ -1130,8 +1134,8 @@ extraVolumeMounts: []
 ##
 pdb:
   create: true
-  minAvailable: ""
-  maxUnavailable: ""
+  minAvailable: ''
+  maxUnavailable: ''
 ## Prometheus Exporter / Metrics
 ##
 metrics:
@@ -1149,15 +1153,15 @@ metrics:
     enabled: false
     ## @param metrics.serviceMonitor.namespace Namespace in which Prometheus is running
     ##
-    namespace: ""
+    namespace: ''
     ## @param metrics.serviceMonitor.interval Interval at which metrics should be scraped
     ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#endpoint
     ##
-    interval: ""
+    interval: ''
     ## @param metrics.serviceMonitor.scrapeTimeout Timeout after which the scrape is ended
     ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#endpoint
     ##
-    scrapeTimeout: ""
+    scrapeTimeout: ''
     ## @param metrics.serviceMonitor.selector Additional labels for ServiceMonitor object
     ## ref: https://github.com/bitnami/charts/tree/main/bitnami/prometheus-operator#prometheus-configuration
     ## e.g:
@@ -1188,7 +1192,7 @@ metrics:
     annotations: {}
     ## @param metrics.serviceMonitor.jobLabel The name of the label on the target service to use as the job name in prometheus.
     ##
-    jobLabel: ""
+    jobLabel: ''
   ## Google Managed Prometheus PodMonitor configuration
   ##
   googlePodMonitor:
@@ -1197,10 +1201,40 @@ metrics:
     enabled: false
     ## @param metrics.googlePodMonitor.namespace Namespace in which PodMonitoring created
     ##
-    namespace: ""
+    namespace: ''
     ## @param metrics.googlePodMonitor.interval Interval at which metrics should be scraped by Google Managed Prometheus
     ##
-    interval: "60s"
+    interval: 60s
     ## @param  metrics.googlePodMonitor.endpoint The endpoint for Google Managed Prometheus scraping the metrics
     ##
     endpoint: /metrics
+Resources:
+  Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub ${AWS::StackName}-bucket-${AWS::AccountId}
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: aws:kms
+              KMSMasterKeyID: alias/aws/s3
+      PublicAccessBlockConfiguration:
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+  BucketBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref Bucket
+      PolicyDocument:
+        Id: RequireEncryptionInTransit
+        Version: '2012-10-17'
+        Statement:
+          - Principal: '*'
+            Action: '*'
+            Effect: Deny
+            Resource:
+              - !GetAtt Bucket.Arn
+              - !Sub ${Bucket.Arn}/*
+            Condition:
+              Bool:
+                aws:SecureTransport: 'false'
