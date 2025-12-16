@@ -1,0 +1,73 @@
+#Cert Manager:
+--------------
+- Cert Manager is a Kubernetes add-on to automate the management and issuance of TLS certificates from various issuing sources.
+- It supports multiple certificate authorities, including Let's Encrypt, HashiCorp Vault, and Venafi.   
+- Cert Manager automates the process of obtaining, renewing, and managing TLS certificates, ensuring secure communication for applications running in Kubernetes clusters.  
+- It integrates with Kubernetes resources, allowing users to define certificate requests and issuers using custom resource definitions (CRDs).
+- Cert Manager can be configured to automatically renew certificates before they expire, reducing the risk of downtime due to expired certificates.
+- It provides support for various challenge types for domain validation, including HTTP-01, DNS-01, and TLS-ALPN-01 challenges.
+- Cert Manager is widely used in Kubernetes environments to enhance security and simplify certificate management for applications and services. 
+#Let's Encrypt:
+-----------------   
+- Let's Encrypt is a free, automated, and open certificate authority (CA) that provides TLS/SSL certificates to enable secure HTTPS connections for websites.
+- It was launched in 2016 by the Internet Security Research Group (ISRG) with the goal of making encrypted connections the default standard for web traffic.
+- Let's Encrypt uses the Automated Certificate Management Environment (ACME) protocol to automate the process of certificate issuance and renewal.
+- The certificates issued by Let's Encrypt are trusted by all major web browsers, making it easy for website owners to secure their sites without incurring costs.
+- Let's Encrypt offers domain-validated (DV) certificates, which verify that the applicant controls the domain for which the certificate is requested.
+- The service supports various challenge types for domain validation, including HTTP-01 and DNS-01 challenges.
+- Let's Encrypt certificates are valid for 90 days, and the service encourages users to automate the renewal process to ensure continuous security.
+- Let's Encrypt has significantly contributed to the widespread adoption of HTTPS on the internet by lowering the barriers to obtaining and managing SSL/TLS certificates.  
+
+#Using Cert Manager with Let's Encrypt:
+---------------------------------------
+- Cert Manager can be configured to use Let's Encrypt as a certificate issuer, allowing Kubernetes applications to automatically obtain and renew TLS certificates.
+- To set up Cert Manager with Let's Encrypt, users need to create an Issuer or ClusterIssuer resource that specifies Let's Encrypt as the CA and defines the challenge type for domain validation.
+- Once the Issuer is configured, users can create Certificate resources that reference the Issuer to request TLS certificates for their applications.
+- Cert Manager will handle the ACME challenge process, automatically validating domain ownership and obtaining the certificates from Let's Encrypt.
+- Cert Manager will also manage the renewal of the certificates before they expire, ensuring that applications maintain secure HTTPS connections without manual intervention.
+- This integration simplifies the process of securing applications in Kubernetes environments, making it easier for developers to implement best practices for security and encryption.     
+
+#Example Issuer Configuration for Let's Encrypt:
+----------------------------------------------
+```yaml
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: your-email@example.com   
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    solvers:
+    - http01:
+        ingress:
+          class: nginx  
+```
+#Example Certificate Configuration: 
+----------------------------------------------
+```yaml 
+apiVersion: cert-manager.io/v1
+kind: Certificate   
+metadata:
+  name: my-app-tls
+  namespace: my-app-namespace   
+spec:
+  secretName: my-app-tls-secret
+    issuerRef:
+        name: letsencrypt-prod
+        kind: ClusterIssuer 
+    commonName: my-app.example.com  
+    dnsNames:
+    - my-app.example.com    
+    - www.my-app.example.com
+``` 
+- In this example, the ClusterIssuer named "letsencrypt-prod" is configured to use Let's Encrypt's production ACME server with HTTP-01 challenge via an NGINX ingress. The Certificate resource requests a TLS certificate for "my-app.example.com" and "www.my-app.example.com", storing the resulting certificate in a Kubernetes secret named "my-app-tls-secret".   
+
+#Downloading helm charts for Cert Manager using helm comands:
+-------------------------------------------------------------
+--> helm repo add jetstack https://charts.jetstack.io
+--> helm repo update
+--> helm search repo jetstack/cert-manager --versions
+--> helm pull jetstack/cert-manager --version v1.19.2 --untar
