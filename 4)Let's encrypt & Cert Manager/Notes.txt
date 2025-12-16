@@ -71,3 +71,10 @@ spec:
 --> helm repo update
 --> helm search repo jetstack/cert-manager --versions
 --> helm pull jetstack/cert-manager --version v1.19.2 --untar
+
+
+Youtube:
+--------
+1)https://www.youtube.com/watch?v=KAa2l0oycOk
+2)https://www.youtube.com/watch?v=7m4_kZOObzw
+3)https://www.youtube.com/watch?v=R1tKtYjFrKk
