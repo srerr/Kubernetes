@@ -1,0 +1,16 @@
+#Harbor & Trivy Notes:
+-----------------------
+- Harbor is an open-source container image registry that secures images with role-based access control, vulnerability scanning, and image signing.
+- It provides a web-based user interface for managing container images and Helm charts.
+- Key features include image replication, vulnerability scanning, and content signing.
+- Harbor supports integration with various authentication methods, including LDAP, OIDC, and SAML.  
+- It can be deployed on-premises or in cloud environments, often used alongside Kubernetes.
+- Harbor uses a microservices architecture, allowing for scalability and flexibility in deployment. 
+- Trivy is a comprehensive security scanner for containers and other artifacts, capable of detecting vulnerabilities in OS packages and application dependencies.
+- Trivy integrates seamlessly with Harbor to provide vulnerability scanning for container images stored in the registry.        
+- Key features of Trivy include fast scanning, support for multiple artifact types, and detailed vulnerability reports.
+- Trivy can be used as a standalone tool or integrated into CI/CD pipelines for automated security checks.
+- Both Harbor and Trivy are open-source projects with active communities for support and contributions.         
+- Documentation and resources for Harbor and Trivy are available on their respective official websites and GitHub repositories.
+- They are suitable for organizations looking to enhance the security and management of their containerized applications.       
+-----------------------
