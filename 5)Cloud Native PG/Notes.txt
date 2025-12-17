@@ -1,0 +1,15 @@
+#Cloud Native PG Notes:
+-----------------------
+- Cloud Native PG is a Kubernetes operator for managing PostgreSQL clusters in a cloud-native environment.
+- It provides automated deployment, scaling, and management of PostgreSQL databases.    
+- Key features include automated backups, failover, and monitoring.
+- It supports various cloud providers and can be integrated with existing Kubernetes infrastructure.    
+- Cloud Native PG uses Custom Resource Definitions (CRDs) to define PostgreSQL clusters and their configurations.
+- It offers high availability and disaster recovery options for PostgreSQL databases.   
+- The operator can be installed using Helm charts or kubectl commands.
+- It is designed to work seamlessly with other cloud-native tools and services, such as Prometheus for monitoring and Grafana for visualization.
+- Cloud Native PG is open-source and has an active community for support and contributions. 
+- Documentation and resources are available on the official Cloud Native PG website and GitHub repository.      
+- It is suitable for organizations looking to leverage PostgreSQL in a cloud-native architecture while ensuring reliability and scalability.
+----------------------- 
+
